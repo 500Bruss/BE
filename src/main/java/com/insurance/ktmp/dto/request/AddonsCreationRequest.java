@@ -5,20 +5,18 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductCreationRequest {
+
+public class AddonsCreationRequest {
+    String code;
     String name;
     String description;
-    Long category;
     BigDecimal price;
-    String baseCover;
-    ProductStatus status;
-    Boolean visible;
+    Boolean active;
     String metaData;
 }
