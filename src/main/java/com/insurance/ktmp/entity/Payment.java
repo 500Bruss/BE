@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class Payment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PolicyHistory {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
