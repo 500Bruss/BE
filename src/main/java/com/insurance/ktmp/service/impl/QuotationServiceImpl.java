@@ -1,7 +1,6 @@
 package com.insurance.ktmp.service.impl;
 
 import com.insurance.ktmp.entity.Product;
-import com.insurance.ktmp.entity.Quotation;
 import com.insurance.ktmp.exception.ApiException;
 import com.insurance.ktmp.exception.NotFoundException;
 import com.insurance.ktmp.repository.ProductRepository;

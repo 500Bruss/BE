@@ -1,7 +1,5 @@
 package com.insurance.ktmp.service;
 
-import com.insurance.ktmp.entity.Quotation;
-
 import java.util.List;
 
 public interface QuotationService {

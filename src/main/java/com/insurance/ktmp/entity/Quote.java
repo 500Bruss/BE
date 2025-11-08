@@ -1,4 +1,5 @@
 package com.insurance.ktmp.entity;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -9,22 +10,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "policies")
+@Table(name = "quotes")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Policy {
+public class Quote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true, length = 64)
-    private String policyNumber;
-
-    @ManyToOne
-    @JoinColumn(name = "application_id")
-    private Application application;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -34,25 +28,25 @@ public class Policy {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(columnDefinition = "JSON")
-    private String policyData;
+    @Column(nullable = false, columnDefinition = "JSON")
+    private String inputData;
 
-    @Column(nullable = false)
-    private LocalDateTime startDate;
-
-    @Column(nullable = false)
-    private LocalDateTime endDate;
+    @Column(nullable = false, precision = 15, scale = 2, columnDefinition = "DECIMAL(15,2) DEFAULT 0")
+    private BigDecimal premium;
 
     @Column(nullable = false, length = 30)
     private String status;
 
-    @Column(nullable = false, precision = 15, scale = 2, columnDefinition = "DECIMAL(15,2) DEFAULT 0")
-    private BigDecimal premiumTotal;
+    @Column
+    private LocalDateTime validUntil;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-}
 
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+}

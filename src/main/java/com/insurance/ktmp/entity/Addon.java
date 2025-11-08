@@ -1,4 +1,5 @@
 package com.insurance.ktmp.entity;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -9,45 +10,37 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "policies")
+@Table(name = "addons")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Policy {
+public class Addon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true, length = 64)
-    private String policyNumber;
-
-    @ManyToOne
-    @JoinColumn(name = "application_id")
-    private Application application;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(columnDefinition = "JSON")
-    private String policyData;
+    @Column(length = 100)
+    private String code;
 
-    @Column(nullable = false)
-    private LocalDateTime startDate;
+    @Column(nullable = false, length = 255)
+    private String name;
 
-    @Column(nullable = false)
-    private LocalDateTime endDate;
-
-    @Column(nullable = false, length = 30)
-    private String status;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @Column(nullable = false, precision = 15, scale = 2, columnDefinition = "DECIMAL(15,2) DEFAULT 0")
-    private BigDecimal premiumTotal;
+    private BigDecimal price;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean active;
+
+    @Column(columnDefinition = "JSON")
+    private String metadata;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

@@ -1,6 +1,5 @@
 package com.insurance.ktmp.controller;
 
-import com.insurance.ktmp.entity.Quotation;
 import com.insurance.ktmp.service.QuotationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
