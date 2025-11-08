@@ -1,10 +1,9 @@
 package com.insurance.ktmp.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
+
+import java.util.Set;
 
 
 @Entity
@@ -13,9 +12,9 @@ import lombok.AllArgsConstructor;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", nullable = false, length = 100)
@@ -23,4 +22,7 @@ public class Role {
 
     @Column(name = "description", length = 255)
     private String description;
+
+    @ManyToMany
+    Set<Permission> permissions;
 }

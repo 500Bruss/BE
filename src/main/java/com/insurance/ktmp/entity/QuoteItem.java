@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class QuoteItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
