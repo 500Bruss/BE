@@ -1,10 +1,9 @@
-package com.insurance.ktmp.dto.request;
+package com.insurance.ktmp.dto.response;
 
 import com.insurance.ktmp.enums.ProductStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,13 +11,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductCreationRequest {
+public class CategoryResponse {
+    Long id;
+    String code;
     String name;
     String description;
-    Long category;
-    BigDecimal price;
-    String baseCover;
-    ProductStatus status;
-    Boolean visible;
+    ProductStatus productStatus;
     String metaData;
+    LocalDateTime createdDate;
+    LocalDateTime updatedDate;
+    Long createBy;
+    Long updateBy;
 }

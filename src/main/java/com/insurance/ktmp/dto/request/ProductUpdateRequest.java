@@ -19,6 +19,6 @@ public class ProductUpdateRequest {
         String baseCover;
         ProductStatus status;
         Boolean visible;
-        String metadata;
+        String metaData;
 
 }
