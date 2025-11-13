@@ -1,5 +1,6 @@
 package com.insurance.ktmp.dto.response;
 
+import com.insurance.ktmp.entity.User;
 import com.insurance.ktmp.enums.ProductStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -24,8 +26,7 @@ public class ProductResponse {
     ProductStatus status;
     Boolean visible;
     String metaData;
+    List<AddonsResponse> addonsList;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-    Long createdBy;
-    Long updatedBy;
 }

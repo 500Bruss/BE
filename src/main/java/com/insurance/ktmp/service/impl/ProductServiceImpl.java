@@ -1,24 +1,104 @@
 package com.insurance.ktmp.service.impl;
 
+import com.insurance.ktmp.common.IdGenerator;
+import com.insurance.ktmp.common.RestResponse;
+import com.insurance.ktmp.common.SearchHelper;
+import com.insurance.ktmp.dto.request.AddonsCreationRequest;
+import com.insurance.ktmp.dto.request.ProductCreationRequest;
+import com.insurance.ktmp.dto.response.ListResponse;
+import com.insurance.ktmp.dto.response.ProductResponse;
+import com.insurance.ktmp.entity.Addon;
 import com.insurance.ktmp.entity.Category;
 import com.insurance.ktmp.entity.Product;
+import com.insurance.ktmp.entity.User;
+import com.insurance.ktmp.enums.ProductStatus;
 import com.insurance.ktmp.exception.ApiException;
+import com.insurance.ktmp.exception.AppException;
+import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.exception.NotFoundException;
+import com.insurance.ktmp.mapper.ProductMapper;
+import com.insurance.ktmp.repository.AddonRepository;
 import com.insurance.ktmp.repository.CategoryRepository;
 import com.insurance.ktmp.repository.ProductRepository;
-import com.insurance.ktmp.service.ProductService;
+import com.insurance.ktmp.repository.UserRepository;
+import com.insurance.ktmp.service.IProductService;
+import io.github.perplexhub.rsql.RSQLJPASupport;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements IProductService {
     private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
+    private static final List<String> SEARCH_FIELDS = List.of("code", "status");
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
+    private final AddonRepository addonRepository;
+    private ProductMapper productMapper;
+
+    @Override
+    public RestResponse<ListResponse<ProductResponse>> getListProductsByFilter(int page, int size, String sort, String filter, String search, boolean all) {
+        Specification<Product> sortable = RSQLJPASupport.toSort(sort);
+        Specification<Product> filterable = RSQLJPASupport.toSpecification(filter);
+        Specification<Product> searchable = SearchHelper.parseSearchToken(search, SEARCH_FIELDS);
+        Pageable pageable = all ? Pageable.unpaged() : PageRequest.of(page - 1, size);
+        Page<ProductResponse> responses = productRepository
+                .findAll(sortable.and(filterable).and(searchable), pageable)
+                .map(productMapper::toProductResponse);
+
+        return RestResponse.ok(ListResponse.of(responses));
+    }
+
+    @Override
+    public RestResponse<ProductResponse> createProduct(Long userId, ProductCreationRequest request) {
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
+
+        Product product = productMapper.toProduct(request);
+        product.setId(IdGenerator.generateRandomId());
+        product.setCategory(category);
+        product.setStatus(ProductStatus.ACTIVE.name());
+        product.setVisible(true);
+        product.setCreatedAt(LocalDateTime.now());
+        product.setUpdatedAt(LocalDateTime.now());
+        product.setCreatedBy(user);
+        product.setUpdatedBy(user);
+
+        List<Addon> addonList = new ArrayList<>();
+        for (AddonsCreationRequest addOnItem : request.getListAddOns()) {
+            Addon addon = Addon.builder()
+                    .id(IdGenerator.generateRandomId())
+                    .product(product)
+                    .code(addOnItem.getCode())
+                    .name(addOnItem.getName())
+                    .description(addOnItem.getDescription())
+                    .price(addOnItem.getPrice())
+                    .active(true)
+                    .metadata(addOnItem.getMetaData())
+                    .build();
+            addonList.add(addon);
+        }
+        addonRepository.saveAll(addonList);
+        productRepository.save(product);
+
+        return RestResponse.ok(productMapper.toProductResponse(product));
+    }
+
 
 //    private final ProductRepository productRepo;
 //    private final CategoryRepository categoryRepo;
