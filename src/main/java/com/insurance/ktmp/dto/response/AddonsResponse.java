@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
-public class AddonsReponse {
+public class AddonsResponse {
     Long id;
     Long productId;
     String code;

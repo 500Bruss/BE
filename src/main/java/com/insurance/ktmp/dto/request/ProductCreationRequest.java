@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -13,12 +14,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductCreationRequest {
+    @NonNull
     String name;
     String description;
-    Long category;
+
+    @NonNull
+    Long categoryId;
+
+    @NonNull
     BigDecimal price;
     String baseCover;
-    ProductStatus status;
-    Boolean visible;
-    String metaData;
+    String metadata;
+
+    List<AddonsCreationRequest> listAddOns;
 }
