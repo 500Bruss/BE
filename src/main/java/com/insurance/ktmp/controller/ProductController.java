@@ -4,6 +4,7 @@ import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.dto.request.ProductCreationRequest;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.dto.response.ProductResponse;
+import com.insurance.ktmp.dto.request.ProductUpdateRequest;
 import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.service.IProductService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,8 +16,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.reflections.Reflections.log;
+
+
 @RestController
 @RequestMapping("/api/products")
+
 @RequiredArgsConstructor
 public class ProductController extends BaseController{
     private final IProductService productService;
@@ -40,5 +45,32 @@ public class ProductController extends BaseController{
         Long userId =extractUserIdFromRequest(htpReq);
         RestResponse<ProductResponse> response = productService.createProduct(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<RestResponse<Void>> deleteProduct(
+            @PathVariable Long productId,
+            HttpServletRequest httpReq
+    ) {
+        // 1. Lấy userId từ JWT (BaseController bạn đã có hàm này)
+        Long userId = extractUserIdFromRequest(httpReq);
+        log.info("USER ID = " + userId);
+
+        // 2. Gọi service
+        RestResponse<Void> response = productService.deleteProduct(productId, userId);
+
+        // 3. Trả về 200 OK (hoặc 204 nếu bạn muốn)
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> updateProduct(
+            @PathVariable Long id,
+            @RequestBody ProductUpdateRequest request
+    ) {
+        return ResponseEntity.ok(productService.updateProduct(id, request));
     }
 }

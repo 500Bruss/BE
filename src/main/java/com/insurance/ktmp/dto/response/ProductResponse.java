@@ -18,15 +18,17 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 public class ProductResponse {
-    BigInteger id;
+    Long id;
     String name;
     String description;
+    Long categoryId;
     BigDecimal price;
     String baseCover;
-    ProductStatus status;
+    String status;
     Boolean visible;
-    String metaData;
-    List<AddonsResponse> addonsList;
+    String thumbnailUrl;
+    String metadata;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+    List<AddonsResponse> addonsList;
 }
