@@ -5,6 +5,7 @@ import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.common.SearchHelper;
 import com.insurance.ktmp.dto.request.AddonsCreationRequest;
 import com.insurance.ktmp.dto.request.ProductCreationRequest;
+import com.insurance.ktmp.dto.request.ProductUpdateRequest;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.dto.response.ProductResponse;
 import com.insurance.ktmp.entity.Addon;
@@ -103,7 +104,51 @@ public class ProductServiceImpl implements IProductService {
         return RestResponse.ok(productMapper.toProductResponse(product));
     }
 
+    @Override
+    public RestResponse<Void> deleteProduct(Long productId, Long userId) {
 
+        // 1. Tìm product
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        // 2. (Optional) load user để ghi audit: updated_by
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        product.setUpdatedBy(user);
+        product.setUpdatedAt(LocalDateTime.now());
+
+        // 3. Xóa product
+        //    Nhờ ON DELETE CASCADE nên addons sẽ tự xóa theo
+        productRepository.delete(product);
+
+        // 4. Trả về response chung
+        return RestResponse.ok(null);
+    }
+
+    @Override
+    public ProductResponse getById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        return productMapper.toProductResponse(product);
+    }
+
+    @Override
+    public ProductResponse updateProduct(Long id, ProductUpdateRequest request) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        productMapper.updateProductFromRequest(request, product);
+
+        product.setUpdatedAt(LocalDateTime.now());
+
+        Product saved = productRepository.save(product);
+
+        return productMapper.toProductResponse(saved);
+
+    }
 //    private final ProductRepository productRepo;
 //    private final CategoryRepository categoryRepo;
 //
