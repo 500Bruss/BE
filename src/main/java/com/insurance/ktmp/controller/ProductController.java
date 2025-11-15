@@ -25,7 +25,7 @@ public class ProductController extends BaseController{
     public ResponseEntity<RestResponse<ListResponse<ProductResponse>>> getListDrones(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "code,desc") String sort,
+            @RequestParam(defaultValue = "createdAt,desc") String sort,
             @RequestParam(required = false) String filter,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) boolean all) {

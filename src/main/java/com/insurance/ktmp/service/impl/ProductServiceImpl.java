@@ -41,12 +41,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements IProductService {
     private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
-    private static final List<String> SEARCH_FIELDS = List.of("code", "status");
+    private static final List<String> SEARCH_FIELDS = List.of("status");
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final AddonRepository addonRepository;
-    private ProductMapper productMapper;
+    private final ProductMapper productMapper;
 
     @Override
     public RestResponse<ListResponse<ProductResponse>> getListProductsByFilter(int page, int size, String sort, String filter, String search, boolean all) {
@@ -69,31 +69,35 @@ public class ProductServiceImpl implements IProductService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
 
-        Product product = productMapper.toProduct(request);
-        product.setId(IdGenerator.generateRandomId());
-        product.setCategory(category);
-        product.setStatus(ProductStatus.ACTIVE.name());
-        product.setVisible(true);
-        product.setCreatedAt(LocalDateTime.now());
-        product.setUpdatedAt(LocalDateTime.now());
-        product.setCreatedBy(user);
-        product.setUpdatedBy(user);
+        Product product = Product.builder()
+                .id(IdGenerator.generateRandomId())
+                .name(request.getName())
+                .category(category)
+                .status(ProductStatus.ACTIVE.name())
+                .price(request.getPrice())
+                .description(request.getDescription())
+                .visible(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .createdBy(user)
+                .updatedBy(user)
+                .build();
 
-        List<Addon> addonList = new ArrayList<>();
-        for (AddonsCreationRequest addOnItem : request.getListAddOns()) {
-            Addon addon = Addon.builder()
-                    .id(IdGenerator.generateRandomId())
-                    .product(product)
-                    .code(addOnItem.getCode())
-                    .name(addOnItem.getName())
-                    .description(addOnItem.getDescription())
-                    .price(addOnItem.getPrice())
-                    .active(true)
-                    .metadata(addOnItem.getMetaData())
-                    .build();
-            addonList.add(addon);
-        }
-        addonRepository.saveAll(addonList);
+//        List<Addon> addonList = new ArrayList<>();
+//        for (AddonsCreationRequest addOnItem : request.getListAddOns()) {
+//            Addon addon = Addon.builder()
+//                    .id(IdGenerator.generateRandomId())
+//                    .product(product)
+//                    .code(addOnItem.getCode())
+//                    .name(addOnItem.getName())
+//                    .description(addOnItem.getDescription())
+//                    .price(addOnItem.getPrice())
+//                    .active(true)
+//                    .metadata(addOnItem.getMetaData())
+//                    .build();
+//            addonList.add(addon);
+//        }
+//        addonRepository.saveAll(addonList);
         productRepository.save(product);
 
         return RestResponse.ok(productMapper.toProductResponse(product));
