@@ -13,7 +13,7 @@ public interface IProductService {
 
     RestResponse<Void> deleteProduct(Long productId, Long userId);
 
-    ProductResponse getById(Long id);
+    RestResponse<ProductResponse> getById(Long id);
 
-    ProductResponse updateProduct(Long id, ProductUpdateRequest request);
+    RestResponse<ProductResponse> updateProduct(Long id, ProductUpdateRequest request);
 }

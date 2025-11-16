@@ -127,28 +127,37 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public ProductResponse getById(Long id) {
+    public RestResponse<ProductResponse> getById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        return productMapper.toProductResponse(product);
+        ProductResponse response = productMapper.toProductResponse(product);
+        return RestResponse.ok(response);
     }
 
     @Override
-    public ProductResponse updateProduct(Long id, ProductUpdateRequest request) {
+    public RestResponse<ProductResponse> updateProduct(Long id, ProductUpdateRequest request) {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         productMapper.updateProductFromRequest(request, product);
 
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
+            product.setCategory(category);
+        }
+
         product.setUpdatedAt(LocalDateTime.now());
 
         Product saved = productRepository.save(product);
+        ProductResponse response = productMapper.toProductResponse(saved);
 
-        return productMapper.toProductResponse(saved);
-
+        return RestResponse.ok(response);
     }
+
+
 //    private final ProductRepository productRepo;
 //    private final CategoryRepository categoryRepo;
 //

@@ -24,9 +24,9 @@ public class ProductResponse {
     Long categoryId;
     BigDecimal price;
     String baseCover;
-    String status;
+    ProductStatus status;
     Boolean visible;
-    String thumbnailUrl;
+
     String metadata;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

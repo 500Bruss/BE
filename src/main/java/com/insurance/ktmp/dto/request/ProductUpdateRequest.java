@@ -12,13 +12,14 @@ import java.math.BigDecimal;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductUpdateRequest {
 
-        String name;
-        String description;
-        Long category;
-        BigDecimal price;
-        String baseCover;
-        ProductStatus status;
-        Boolean visible;
-        String metaData;
+    String name;
+    String description;
+    Long categoryId;
+    BigDecimal price;
+    String baseCover;
+    ProductStatus status;
+    Boolean visible;
+    String metadata;
+
 
 }

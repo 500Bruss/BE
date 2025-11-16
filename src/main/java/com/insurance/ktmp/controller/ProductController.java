@@ -2,9 +2,10 @@ package com.insurance.ktmp.controller;
 
 import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.dto.request.ProductCreationRequest;
+import com.insurance.ktmp.dto.request.ProductUpdateRequest;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.dto.response.ProductResponse;
-import com.insurance.ktmp.dto.request.ProductUpdateRequest;
+
 import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.service.IProductService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,15 +63,20 @@ public class ProductController extends BaseController{
         return ResponseEntity.ok(response);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getById(id));
+    public ResponseEntity<RestResponse<ProductResponse>> getById(
+            @PathVariable Long id) {
+
+        RestResponse<ProductResponse> response = productService.getById(id);
+        return ResponseEntity.ok(response);
     }
 
+    // ================== UPDATE ==================
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> updateProduct(
+    public ResponseEntity<RestResponse<ProductResponse>> updateProduct(
             @PathVariable Long id,
-            @RequestBody ProductUpdateRequest request
-    ) {
-        return ResponseEntity.ok(productService.updateProduct(id, request));
+            @RequestBody @Valid ProductUpdateRequest request) {
+
+        RestResponse<ProductResponse> response = productService.updateProduct(id, request);
+        return ResponseEntity.ok(response);
     }
 }
