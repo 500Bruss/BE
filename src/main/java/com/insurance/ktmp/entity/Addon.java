@@ -1,7 +1,7 @@
 package com.insurance.ktmp.entity;
 
+import com.insurance.ktmp.enums.AddOnsStatus;
 import lombok.*;
-
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Addon {
+
     @Id
     private Long id;
 
@@ -21,7 +22,7 @@ public class Addon {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(length = 100)
+    @Column(nullable = false, length = 100)
     private String code;
 
     @Column(nullable = false, length = 255)
@@ -30,14 +31,14 @@ public class Addon {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, precision = 15, scale = 2, columnDefinition = "DECIMAL(15,2) DEFAULT 0")
+    @Column(nullable = false, precision = 15, scale = 2, columnDefinition = "DECIMAL(15,2)")
     private BigDecimal price;
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
-    private Boolean active;
+    @Column(nullable = false, length = 30, columnDefinition = "VARCHAR(30) DEFAULT 'ACTIVE'")
+    private AddOnsStatus status;
 
     @Column(columnDefinition = "JSON")
-    private String metadata;
+    private String metaData;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -45,4 +46,3 @@ public class Addon {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 }
-
