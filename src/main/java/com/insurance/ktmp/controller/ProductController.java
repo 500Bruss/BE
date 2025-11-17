@@ -22,7 +22,7 @@ public class ProductController extends BaseController{
     private final IProductService productService;
 
     @GetMapping
-    public ResponseEntity<RestResponse<ListResponse<ProductResponse>>> getListDrones(
+    public ResponseEntity<RestResponse<ListResponse<ProductResponse>>> getListProductsByFilter(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "createdAt,desc") String sort,

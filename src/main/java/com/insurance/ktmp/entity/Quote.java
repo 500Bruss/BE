@@ -1,9 +1,7 @@
 package com.insurance.ktmp.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import com.insurance.ktmp.enums.QuoteStatus;
+import lombok.*;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -15,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Quote {
     @Id
     private Long id;
@@ -34,7 +33,7 @@ public class Quote {
     private BigDecimal premium;
 
     @Column(nullable = false, length = 30)
-    private String status;
+    private QuoteStatus status;
 
     @Column
     private LocalDateTime validUntil;
