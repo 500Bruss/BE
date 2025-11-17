@@ -41,6 +41,8 @@ public enum ErrorCode {
     //PRODUCT
     PRODUCT_NOT_FOUND("PRODUCT_001", "Product not found", HttpStatus.NOT_FOUND),
 
+    //Application
+    APPLICATION_NOT_FOUND("PRODUCT_001", "Application not found", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(String code, String message, HttpStatus statusCode) {

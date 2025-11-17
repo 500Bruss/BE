@@ -1,23 +1,18 @@
 package com.insurance.ktmp.dto.request;
 
-import com.insurance.ktmp.enums.ProductStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.math.BigDecimal;
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductUpdateRequest {
-
-    String name;
-    String description;
-    Long categoryId;
-    BigDecimal price;
-    String baseCover;
-    String metadata;
-
-
+public class ApplicationCreationRequest {
+    Long quoteId;
+    Long productId;
+    String applicantData;  // JSON string
+    String insuredData;    // JSON string
+    BigDecimal totalPremium;
 }
+

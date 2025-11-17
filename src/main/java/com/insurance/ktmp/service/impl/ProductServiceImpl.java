@@ -141,17 +141,42 @@ public class ProductServiceImpl implements IProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        productMapper.updateProductFromRequest(request, product);
+        // ====== UPDATE FIELDS THEO REQUEST ======
 
+        if (request.getName() != null) {
+            product.setName(request.getName());
+        }
+
+        if (request.getDescription() != null) {
+            product.setDescription(request.getDescription());
+        }
+
+        if (request.getPrice() != null) {
+            product.setPrice(request.getPrice());
+        }
+
+        if (request.getBaseCover() != null) {
+            product.setBaseCover(request.getBaseCover());
+        }
+
+        if (request.getMetadata() != null) {
+            product.setMetadata(request.getMetadata());
+        }
+
+        // ====== UPDATE CATEGORY ======
         if (request.getCategoryId() != null) {
             Category category = categoryRepository.findById(request.getCategoryId())
                     .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
             product.setCategory(category);
         }
 
+        // ====== UPDATE TIMESTAMP ======
         product.setUpdatedAt(LocalDateTime.now());
 
+        // ====== SAVE ======
         Product saved = productRepository.save(product);
+
+        // ====== MAP TO RESPONSE ======
         ProductResponse response = productMapper.toProductResponse(saved);
 
         return RestResponse.ok(response);
