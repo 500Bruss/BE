@@ -9,5 +9,8 @@ import org.mapstruct.Mapping;
 public interface QuoteMapper {
 
     @Mapping(target = "productName", source = "product.name")
+    @Mapping(target = "userName", source = "user.fullName")
+    @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "productId", source = "product.id")
     QuoteResponse toQuoteResponse(Quote quote);
 }

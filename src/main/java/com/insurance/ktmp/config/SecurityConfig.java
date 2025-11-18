@@ -20,14 +20,17 @@ public class SecurityConfig {
     private static final String[] PUBLIC_ENPOINTS = {"/users", "/auth/login", "/auth/register", "/auth/introspect",
             "/auth/logout", "/auth/refresh", "/auth/revoke"};
 
+    private static final String[] PUBLIC_ENPOINTS_FOR_GET = {"/api/payments/vnpay/ipn", "/api/payments/vnpay/return"};
+
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST, PUBLIC_ENPOINTS).permitAll()
-                        .anyRequest().authenticated()
+                        request.requestMatchers(HttpMethod.POST, PUBLIC_ENPOINTS).permitAll()
+                                .requestMatchers(HttpMethod.GET, PUBLIC_ENPOINTS_FOR_GET).permitAll()
+                                .anyRequest().authenticated()
                 );
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(customJwtDecoder)

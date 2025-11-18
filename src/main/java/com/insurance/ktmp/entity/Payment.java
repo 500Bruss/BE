@@ -1,12 +1,14 @@
 package com.insurance.ktmp.entity;
 
+import com.insurance.ktmp.enums.PaymentMethod;
+import com.insurance.ktmp.enums.PaymentStatus;
 import jakarta.persistence.*;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 @Table(name = "payments")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Payment {
@@ -32,8 +35,7 @@ public class Payment {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "method_id", nullable = false)
+    @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
     @Column(nullable = false, precision = 15, scale = 2, columnDefinition = "DECIMAL(15,2) DEFAULT 0")
@@ -42,12 +44,21 @@ public class Payment {
     @Column(length = 255)
     private String providerReference;
 
-    @Column(nullable = false, length = 30)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    private String transactionId;
+
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "transaction_time", nullable = false)
+    private LocalDateTime transactionTime;
+
+    @Column(name = "vnpay_resp")
+    private String vnpayResp;
 }

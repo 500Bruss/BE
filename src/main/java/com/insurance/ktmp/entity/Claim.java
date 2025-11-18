@@ -1,9 +1,6 @@
 package com.insurance.ktmp.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -13,6 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "claims")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Claim {

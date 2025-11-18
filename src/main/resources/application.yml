@@ -13,5 +13,12 @@ jwt:
   signerKey: "Fx4NoxybRRfHEk5J4Z12C45rxdfAcNGkMehTCQ1qrdY6B/Mw0Ie4E+36zVliXgWN\n"
   valid-duration: 3600 #in second
   refreshable-duration: 7200 #in second
+vnpay:
+  tmnCode: FRKIW639
+  secretKey: OK25EA6UVCYQG0CA3M4BWPW3GZLM3CG1
+  paymentUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  refundUrl: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
+  returnUrl: http://localhost:8080/api/payments/vnpay/return
+  ipnUrl: http://localhost:8080/api/payments/vnpay/ipn
 server:
   port: 8080

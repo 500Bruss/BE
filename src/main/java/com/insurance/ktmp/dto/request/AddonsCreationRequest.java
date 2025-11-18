@@ -12,12 +12,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddonsCreationRequest {
-
-    Long productId;
     String code;
     String name;
     String description;
     BigDecimal price;
-    AddOnsStatus status;
     String metaData;
 }

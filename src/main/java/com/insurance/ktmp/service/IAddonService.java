@@ -5,12 +5,13 @@ import com.insurance.ktmp.dto.request.AddonsCreationRequest;
 import com.insurance.ktmp.dto.request.AddonsUpdateRequest;
 import com.insurance.ktmp.dto.response.AddonsResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
+import com.insurance.ktmp.dto.response.ProductResponse;
 
 import java.util.List;
 
 public interface IAddonService {
 
-    RestResponse<AddonsResponse> createAddon(AddonsCreationRequest request);
+    RestResponse<ProductResponse> createAddon(Long userId, Long productId, AddonsCreationRequest request);
 
     RestResponse<AddonsResponse> updateAddon(Long id, AddonsUpdateRequest request);
 
