@@ -1,0 +1,14 @@
+package com.insurance.ktmp.dto.request;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class QuoteCreationRequest {
+    Long productId;
+    String inputData;
+}

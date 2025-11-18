@@ -43,6 +43,7 @@ public enum ErrorCode {
 
     //Application
     APPLICATION_NOT_FOUND("PRODUCT_001", "Application not found", HttpStatus.NOT_FOUND),
+    INVALID_INPUT_JSON("INPUT_001", "Invalid input JSON", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(String code, String message, HttpStatus statusCode) {

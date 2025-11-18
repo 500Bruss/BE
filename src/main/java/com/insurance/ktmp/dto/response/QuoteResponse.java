@@ -1,6 +1,6 @@
 package com.insurance.ktmp.dto.response;
 
-import com.insurance.ktmp.enums.AddOnsStatus;
+import com.insurance.ktmp.enums.QuoteStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,15 +12,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AddonsResponse {
+public class QuoteResponse {
     Long id;
+    Long userId;
     Long productId;
-    String code;
-    String name;
-    String description;
-    BigDecimal price;
-    AddOnsStatus status;
-    String metaData;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
+    String productName;
+    String inputData;
+    BigDecimal premium;
+    QuoteStatus status;
+    LocalDateTime validUntil;
 }
