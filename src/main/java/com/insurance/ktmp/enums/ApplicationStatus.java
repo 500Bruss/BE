@@ -1,10 +1,8 @@
 package com.insurance.ktmp.enums;
 
 public enum ApplicationStatus {
-    ACTIVE,
-    INACTIVE,
-    PENDING,
+   SUBMITTED,
     APPROVED,
     REJECTED,
-    PREPARE,
+    CANCELLED,
 }
