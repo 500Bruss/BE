@@ -55,6 +55,7 @@ public enum ErrorCode {
 
     //POLICY
     POLICY_NOT_FOUND("POLICY_001", "Policy not found", HttpStatus.NOT_FOUND),
+    CLAIM_NOT_FOUND("CLAIM_001", "Claim not found", HttpStatus.NOT_FOUND),
     ;
 
 
