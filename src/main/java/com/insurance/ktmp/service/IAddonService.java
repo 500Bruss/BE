@@ -24,7 +24,10 @@ public interface IAddonService {
 
     RestResponse<Void> markAsActive(Long id);
 
+    RestResponse<String> updateAddonVisible(Long addonId, Long userId, String status);
     RestResponse<ListResponse<AddonsResponse>> getAddonListByFilter(
             int page, int size, String sort, String filter, String search, boolean all
     );
+
+
 }
