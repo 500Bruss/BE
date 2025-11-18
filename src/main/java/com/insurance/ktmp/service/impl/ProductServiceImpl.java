@@ -3,20 +3,16 @@ package com.insurance.ktmp.service.impl;
 import com.insurance.ktmp.common.IdGenerator;
 import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.common.SearchHelper;
-import com.insurance.ktmp.dto.request.AddonsCreationRequest;
 import com.insurance.ktmp.dto.request.ProductCreationRequest;
 import com.insurance.ktmp.dto.request.ProductUpdateRequest;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.dto.response.ProductResponse;
-import com.insurance.ktmp.entity.Addon;
 import com.insurance.ktmp.entity.Category;
 import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.entity.User;
 import com.insurance.ktmp.enums.ProductStatus;
-import com.insurance.ktmp.exception.ApiException;
 import com.insurance.ktmp.exception.AppException;
 import com.insurance.ktmp.exception.ErrorCode;
-import com.insurance.ktmp.exception.NotFoundException;
 import com.insurance.ktmp.mapper.ProductMapper;
 import com.insurance.ktmp.repository.AddonRepository;
 import com.insurance.ktmp.repository.CategoryRepository;
@@ -27,7 +23,6 @@ import io.github.perplexhub.rsql.RSQLJPASupport;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +30,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
