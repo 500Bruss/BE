@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddonsUpdateRequest {
-
     String name;
     String description;
     BigDecimal price;

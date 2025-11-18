@@ -44,7 +44,6 @@ public class AddonServiceImpl implements IAddonService {
     AddonMapper addonMapper;
     ProductMapper productMapper;
     UserRepository userRepository;
-    private static final List<String> SEARCH_FIELDS = List.of("status", "code", "name");
 
     @Override
     public RestResponse<ProductResponse> createAddon(Long userId, Long productId, AddonsCreationRequest request) {
@@ -81,21 +80,32 @@ public class AddonServiceImpl implements IAddonService {
         return RestResponse.ok(productMapper.toProductResponse(product)); //todo
     }
     @Override
-    public RestResponse<AddonsResponse> updateAddon(Long id, AddonsUpdateRequest request) {
+    public RestResponse<ProductResponse> updateAddon(Long userId, Long id, AddonsUpdateRequest request) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (!user.getRole().stream()
+                .anyMatch(role -> role.getName().equals(PredefinedRole.ADMIN_ROLE))) {
+            throw new AppException(ErrorCode.UNAUTHORIZED_TO_UPDATE_THIS_RESOURCE);
+        }
 
         Addon addon = addonRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Addon not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
 
         addon.setName(request.getName());
         addon.setDescription(request.getDescription());
         addon.setPrice(request.getPrice());
-        addon.setStatus(request.getStatus()); // ENUM nên không .name() //todo
+        addon.setStatus(AddOnsStatus.valueOf(request.getStatus().name()));
         addon.setMetaData(request.getMetaData());
         addon.setUpdatedAt(LocalDateTime.now());
-
         addonRepository.save(addon);
 
-        return RestResponse.ok(addonMapper.toAddonsResponse(addon)); //todo
+        Product product = productRepository.findById(addon.getProduct().getId())
+                .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
+
+
+        return RestResponse.ok(productMapper.toProductResponse(product));
     }
 
 
@@ -124,73 +134,5 @@ public class AddonServiceImpl implements IAddonService {
         return RestResponse.ok(
                 "Addon marked as %s".formatted(newStatus.name())
         );
-    }
-
-
-    @Override
-    public RestResponse<AddonsResponse> getAddonById(Long id) {
-        Addon addon = addonRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
-        return RestResponse.ok(addonMapper.toAddonsResponse(addon));
-    }
-
-    @Override
-    public RestResponse<List<AddonsResponse>> getAllAddons() {
-        List<AddonsResponse> list = addonRepository.findAll()
-                .stream()
-                .map(addonMapper::toAddonsResponse)
-                .toList();
-
-        return RestResponse.ok(list);
-    }
-
-    @Override
-    public RestResponse<List<AddonsResponse>> getAddonsByProduct(Long productId) {
-        List<AddonsResponse> list = addonRepository.findByProduct_Id(productId)
-                .stream()
-                .map(addonMapper::toAddonsResponse)
-                .toList();
-        return RestResponse.ok(list);
-    }
-
-    @Override
-    public RestResponse<Void> markAsInactive(Long id) {
-        Addon addon = addonRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.BUSINESS_INVALID_SEQUENCE));
-
-        addon.setStatus(AddOnsStatus.INACTIVE);
-        addon.setUpdatedAt(LocalDateTime.now());
-
-        addonRepository.save(addon);
-        return RestResponse.ok(null);
-    }
-
-    @Override
-    public RestResponse<Void> markAsActive(Long id) {
-        Addon addon = addonRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.BUSINESS_INVALID_SEQUENCE));
-
-        addon.setStatus(AddOnsStatus.ACTIVE);
-        addon.setUpdatedAt(LocalDateTime.now());
-
-        addonRepository.save(addon);
-        return RestResponse.ok(null);
-    }
-
-    @Override
-    public RestResponse<ListResponse<AddonsResponse>> getAddonListByFilter(
-            int page, int size, String sort, String filter, String search, boolean all
-    ) {
-        Specification<Addon> sortable = RSQLJPASupport.toSort(sort);
-        Specification<Addon> filterable = RSQLJPASupport.toSpecification(filter);
-        Specification<Addon> searchable = SearchHelper.parseSearchToken(search, SEARCH_FIELDS);
-
-        Pageable pageable = all ? Pageable.unpaged() : PageRequest.of(page - 1, size);
-
-        Page<AddonsResponse> responses = addonRepository
-                .findAll(sortable.and(filterable).and(searchable), pageable)
-                .map(addonMapper::toAddonsResponse);
-
-        return RestResponse.ok(ListResponse.of(responses));
     }
 }
