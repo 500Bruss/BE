@@ -19,5 +19,7 @@ public interface ApplicationMapper {
 
     // map totalPremium
     @Mapping(target = "totalPremium", source = "totalPremium")
+    @Mapping(target = "userName", source = "user.fullName")
+    @Mapping(target = "productName", source = "product.name")
     ApplicationResponse toResponse(Application application);
 }

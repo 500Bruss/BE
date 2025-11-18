@@ -14,7 +14,9 @@ public class ApplicationResponse {
     Long id;
     Long quoteId;
     Long productId;
+    String productName;
     Long userId;
+    String userName;
     String applicantData;
     String insuredData;
     String status;

@@ -13,6 +13,7 @@ import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.entity.Quote;
 import com.insurance.ktmp.entity.User;
 import com.insurance.ktmp.enums.ApplicationStatus;
+import com.insurance.ktmp.enums.QuoteStatus;
 import com.insurance.ktmp.exception.AppException;
 import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.mapper.ApplicationMapper;
@@ -97,7 +98,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        Quote quote = quoteRepo.findById(quoteId)
+        Quote quote = quoteRepo.findByIdAndUser_IdAndStatus(quoteId, userId, QuoteStatus.CALCULATED)
                 .orElseThrow(() -> new AppException(ErrorCode.QUOTE_NOT_FOUND));
 
         if (!quote.getUser().getId().equals(userId)) {
@@ -136,6 +137,10 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         appRepo.save(app);
 
+        quote.setStatus(QuoteStatus.CONFIRMED);
+        quote.setUpdatedAt(LocalDateTime.now());
+        quoteRepo.save(quote);
+
         return RestResponse.ok(mapper.toResponse(app));
     }
 
@@ -162,8 +167,4 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         return RestResponse.ok(mapper.toResponse(app));
     }
-
-
-
-
 }

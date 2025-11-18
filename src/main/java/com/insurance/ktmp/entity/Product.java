@@ -41,8 +41,8 @@ public class Product {
     @Column(name = "visible", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean visible;
 
-    @Column(name = "metadata", columnDefinition = "JSON")
-    private String metadata;
+    @Column(name = "meta_data", columnDefinition = "JSON")
+    private String metaData;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Addon> items = new ArrayList<>();

@@ -8,6 +8,7 @@ import com.insurance.ktmp.dto.request.AddonsCreationRequest;
 import com.insurance.ktmp.dto.request.AddonsUpdateRequest;
 import com.insurance.ktmp.dto.response.AddonsResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
+import com.insurance.ktmp.dto.response.ProductResponse;
 import com.insurance.ktmp.entity.Addon;
 import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.entity.User;
@@ -15,6 +16,7 @@ import com.insurance.ktmp.enums.AddOnsStatus;
 import com.insurance.ktmp.exception.AppException;
 import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.mapper.AddonMapper;
+import com.insurance.ktmp.mapper.ProductMapper;
 import com.insurance.ktmp.repository.AddonRepository;
 import com.insurance.ktmp.repository.ProductRepository;
 import com.insurance.ktmp.repository.UserRepository;
@@ -40,17 +42,26 @@ public class AddonServiceImpl implements IAddonService {
     AddonRepository addonRepository;
     ProductRepository productRepository;
     AddonMapper addonMapper;
+    ProductMapper productMapper;
     UserRepository userRepository;
     private static final List<String> SEARCH_FIELDS = List.of("status", "code", "name");
 
     @Override
-    public RestResponse<AddonsResponse> createAddon(AddonsCreationRequest request) {
+    public RestResponse<ProductResponse> createAddon(Long userId, Long productId, AddonsCreationRequest request) {
 
-        if (addonRepository.existsByCode(request.getCode())) {
-            throw new RuntimeException("Addon code already exists");
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (!user.getRole().stream()
+                .anyMatch(role -> role.getName().equals(PredefinedRole.ADMIN_ROLE))) {
+            throw new AppException(ErrorCode.UNAUTHORIZED_TO_UPDATE_THIS_RESOURCE);
         }
 
-        Product product = productRepository.findById(request.getProductId())
+        if (addonRepository.existsByCode(request.getCode())) {
+            throw new AppException(ErrorCode.DATASOURCE_NOT_FOUND);
+        }
+
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
 
         Addon addon = new Addon();
@@ -60,14 +71,14 @@ public class AddonServiceImpl implements IAddonService {
         addon.setName(request.getName());
         addon.setDescription(request.getDescription());
         addon.setPrice(request.getPrice());
-        addon.setStatus(request.getStatus());
+        addon.setStatus(AddOnsStatus.ACTIVE);
         addon.setMetaData(request.getMetaData());
         addon.setCreatedAt(LocalDateTime.now());
         addon.setUpdatedAt(LocalDateTime.now());
 
         addonRepository.save(addon);
 
-        return RestResponse.ok(addonMapper.toAddonsResponse(addon));
+        return RestResponse.ok(productMapper.toProductResponse(product)); //todo
     }
     @Override
     public RestResponse<AddonsResponse> updateAddon(Long id, AddonsUpdateRequest request) {
@@ -78,13 +89,13 @@ public class AddonServiceImpl implements IAddonService {
         addon.setName(request.getName());
         addon.setDescription(request.getDescription());
         addon.setPrice(request.getPrice());
-        addon.setStatus(request.getStatus()); // ENUM nên không .name()
+        addon.setStatus(request.getStatus()); // ENUM nên không .name() //todo
         addon.setMetaData(request.getMetaData());
         addon.setUpdatedAt(LocalDateTime.now());
 
         addonRepository.save(addon);
 
-        return RestResponse.ok(addonMapper.toAddonsResponse(addon));
+        return RestResponse.ok(addonMapper.toAddonsResponse(addon)); //todo
     }
 
 

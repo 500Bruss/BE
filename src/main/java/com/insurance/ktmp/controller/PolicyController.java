@@ -1,11 +1,11 @@
 package com.insurance.ktmp.controller;
 
 import com.insurance.ktmp.common.RestResponse;
-import com.insurance.ktmp.dto.request.PolicyCreationRequest;
+/*import com.insurance.ktmp.dto.request.PolicyCreationRequest;
 import com.insurance.ktmp.dto.response.PolicyResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.dto.response.ProductResponse;
-import com.insurance.ktmp.service.IPolicyService;
+import com.insurance.ktmp.service.IPolicyService;*/
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/policies")
 @RequiredArgsConstructor
 public class PolicyController extends BaseController {
-
+/*
     private final IPolicyService policyService;
 
     @PostMapping
@@ -45,5 +45,5 @@ public class PolicyController extends BaseController {
     ) {
         Long userId = extractUserIdFromRequest(req);
         return ResponseEntity.ok(policyService.updatePolicyStatus(id, status, userId));
-    }
+    }*/
 }

@@ -5,6 +5,7 @@ import com.insurance.ktmp.dto.request.AddonsCreationRequest;
 import com.insurance.ktmp.dto.request.AddonsUpdateRequest;
 import com.insurance.ktmp.dto.response.AddonsResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
+import com.insurance.ktmp.dto.response.ProductResponse;
 import com.insurance.ktmp.enums.AddOnsStatus;
 import com.insurance.ktmp.service.IAddonService;
 
@@ -20,12 +21,14 @@ public class AddonController extends BaseController {
 
     private final IAddonService addonService;
 
-    // ========================= CREATE =========================
-    @PostMapping
-    public ResponseEntity<RestResponse<AddonsResponse>> createAddon(
-            @RequestBody AddonsCreationRequest request
+    @PostMapping("/{productId}")
+    public ResponseEntity<RestResponse<ProductResponse>> createAddon(
+            @PathVariable Long productId,
+            @RequestBody AddonsCreationRequest request,
+            HttpServletRequest httpReq
     ) {
-        return ResponseEntity.ok(addonService.createAddon(request));
+        Long userId = extractUserIdFromRequest(httpReq);
+        return ResponseEntity.ok(addonService.createAddon(userId, productId, request));
     }
 
     // ========================= UPDATE =========================

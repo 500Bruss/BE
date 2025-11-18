@@ -49,7 +49,7 @@ public class CategoryServiceImpl implements ICategoryService {
     public RestResponse<CategoryResponse> createCategory(CategoryCreationRequest request) {
 
         if (categoryRepository.existsByCode(request.getCode())) {
-            throw new RuntimeException("Category code already exists");
+            throw new AppException(ErrorCode.DATASOURCE_ALREADY_EXISTS);
         }
 
         Category category = new Category();
