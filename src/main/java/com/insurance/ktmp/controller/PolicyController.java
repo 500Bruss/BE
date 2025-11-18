@@ -4,7 +4,9 @@ import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.dto.request.PolicyCreationRequest;
 import com.insurance.ktmp.dto.response.PolicyResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
+
 import com.insurance.ktmp.dto.response.ProductResponse;
+
 import com.insurance.ktmp.service.IPolicyService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +28,7 @@ public class PolicyController extends BaseController {
             HttpServletRequest httpReq
     ) {
         Long userId = extractUserIdFromRequest(httpReq);
-        RestResponse<PolicyResponse> response = policyService.createPolicy(userId, request );
+        RestResponse<PolicyResponse>response= policyService.createPolicy(userId, request.getApplicationId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
