@@ -4,6 +4,7 @@ import com.insurance.ktmp.common.IdGenerator;
 import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.common.SearchHelper;
 import com.insurance.ktmp.dto.request.ProductCreationRequest;
+import com.insurance.ktmp.dto.request.ProductUpdateRequest;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.dto.response.ProductResponse;
 import com.insurance.ktmp.entity.Category;
@@ -95,6 +96,84 @@ public class ProductServiceImpl implements IProductService {
         productRepository.save(product);
 
         return RestResponse.ok(productMapper.toProductResponse(product));
+    }
+
+    @Override
+    public RestResponse<Void> deleteProduct(Long productId, Long userId) {
+
+        // 1. Tìm product
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        // 2. (Optional) load user để ghi audit: updated_by
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        product.setUpdatedBy(user);
+        product.setUpdatedAt(LocalDateTime.now());
+
+        // 3. Xóa product
+        //    Nhờ ON DELETE CASCADE nên addons sẽ tự xóa theo
+        productRepository.delete(product);
+
+        // 4. Trả về response chung
+        return RestResponse.ok(null);
+    }
+
+    @Override
+    public RestResponse<ProductResponse> getById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        ProductResponse response = productMapper.toProductResponse(product);
+        return RestResponse.ok(response);
+    }
+
+    @Override
+    public RestResponse<ProductResponse> updateProduct(Long id, ProductUpdateRequest request) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        // ====== UPDATE FIELDS THEO REQUEST ======
+
+        if (request.getName() != null) {
+            product.setName(request.getName());
+        }
+
+        if (request.getDescription() != null) {
+            product.setDescription(request.getDescription());
+        }
+
+        if (request.getPrice() != null) {
+            product.setPrice(request.getPrice());
+        }
+
+        if (request.getBaseCover() != null) {
+            product.setBaseCover(request.getBaseCover());
+        }
+
+        if (request.getMetadata() != null) {
+            product.setMetadata(request.getMetadata());
+        }
+
+        // ====== UPDATE CATEGORY ======
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
+            product.setCategory(category);
+        }
+
+        // ====== UPDATE TIMESTAMP ======
+        product.setUpdatedAt(LocalDateTime.now());
+
+        // ====== SAVE ======
+        Product saved = productRepository.save(product);
+
+        // ====== MAP TO RESPONSE ======
+        ProductResponse response = productMapper.toProductResponse(saved);
+
+        return RestResponse.ok(response);
     }
 
 

@@ -38,7 +38,18 @@ public enum ErrorCode {
     ORDER_NOT_FOUND("ORDER_001", "Order not found", HttpStatus.NOT_FOUND),
     DRONE_UNAVAILABLE("DRONE_001", "Drone unavailable", HttpStatus.SERVICE_UNAVAILABLE),
     INVALID_INPUT_JSON("INPUT_001", "Invalid input JSON", HttpStatus.BAD_REQUEST),
+
+    //PRODUCT
+    PRODUCT_NOT_FOUND("PRODUCT_001", "Product not found", HttpStatus.NOT_FOUND),
+
+    //Application
+    APPLICATION_NOT_FOUND("PRODUCT_001", "Application not found", HttpStatus.NOT_FOUND),
+    APPLICATION_SEARCH_FIELDS("APPLICATION_001", "Search not found ", HttpStatus.NOT_FOUND),
+
+    //Quote
+    QUOTE_NOT_FOUND("QUOTE_001", "Quote not found", HttpStatus.NOT_FOUND),
     ;
+
 
     ErrorCode(String code, String message, HttpStatus statusCode) {
         this.code = code;
