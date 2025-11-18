@@ -47,28 +47,6 @@ public class ProductController extends BaseController{
         RestResponse<ProductResponse> response = productService.createProduct(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    @DeleteMapping("/{productId}")
-    public ResponseEntity<RestResponse<Void>> deleteProduct(
-            @PathVariable Long productId,
-            HttpServletRequest httpReq
-    ) {
-        // 1. Lấy userId từ JWT (BaseController bạn đã có hàm này)
-        Long userId = extractUserIdFromRequest(httpReq);
-        log.info("USER ID = " + userId);
-
-        // 2. Gọi service
-        RestResponse<Void> response = productService.deleteProduct(productId, userId);
-
-        // 3. Trả về 200 OK (hoặc 204 nếu bạn muốn)
-        return ResponseEntity.ok(response);
-    }
-    @GetMapping("/{id}")
-    public ResponseEntity<RestResponse<ProductResponse>> getById(
-            @PathVariable Long id) {
-
-        RestResponse<ProductResponse> response = productService.getById(id);
-        return ResponseEntity.ok(response);
-    }
 
     // ================== UPDATE ==================
     @PutMapping("/{id}")

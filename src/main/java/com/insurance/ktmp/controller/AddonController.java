@@ -33,48 +33,13 @@ public class AddonController extends BaseController {
 
     // ========================= UPDATE =========================
     @PutMapping("/{id}")
-    public ResponseEntity<RestResponse<AddonsResponse>> updateAddon(
+    public ResponseEntity<RestResponse<ProductResponse>> updateAddon(
             @PathVariable Long id,
-            @RequestBody AddonsUpdateRequest request
+            @RequestBody AddonsUpdateRequest request,
+            HttpServletRequest httpReq
     ) {
-        return ResponseEntity.ok(addonService.updateAddon(id, request));
-    }
-
-    // ========================= GET BY ID =========================
-    @GetMapping("/{id}")
-    public ResponseEntity<RestResponse<AddonsResponse>> getAddonById(
-            @PathVariable Long id
-    ) {
-        return ResponseEntity.ok(addonService.getAddonById(id));
-    }
-
-    // ========================= FILTER LIST ========================
-    @GetMapping
-    public ResponseEntity<RestResponse<ListResponse<AddonsResponse>>> getAddonList(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "createdAt,desc") String sort,
-            @RequestParam(required = false) String filter,
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false) boolean all
-    ) {
-        return ResponseEntity.ok(
-                addonService.getAddonListByFilter(page, size, sort, filter, search, all)
-        );
-    }
-
-    // ========================= INACTIVE =========================
-    @PutMapping("/{id}/inactive")
-    public ResponseEntity<RestResponse<String>> markAsInactive(@PathVariable Long id) {
-        addonService.markAsInactive(id);
-        return ResponseEntity.ok(RestResponse.ok("Addon marked as INACTIVE"));
-    }
-
-    // ========================= ACTIVE =========================
-    @PutMapping("/{id}/active")
-    public ResponseEntity<RestResponse<String>> markAsActive(@PathVariable Long id) {
-        addonService.markAsActive(id);
-        return ResponseEntity.ok(RestResponse.ok("Addon marked as ACTIVE"));
+        Long userId = extractUserIdFromRequest(httpReq);
+        return ResponseEntity.ok(addonService.updateAddon(userId, id, request));
     }
 
     // ========================= UPDATE STATUS (có user check) ================
