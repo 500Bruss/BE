@@ -27,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,7 +49,23 @@ public class ApplicationServiceImpl implements IApplicationService {
             "insuredData",
             "status"
     };
+    @Scheduled(cron = "0 */5 * * * *")
+    public void autoCancelApplications() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime threshold = now.minusMinutes(5);
 
+        List<Application> expiredApps =
+                appRepo.findByStatusAndCreatedAtBefore(ApplicationStatus.SUBMITTED, threshold);
+
+        if (expiredApps.isEmpty()) return;
+
+        expiredApps.forEach(app -> {
+            app.setStatus(ApplicationStatus.CANCELLED);
+            app.setUpdatedAt(now);
+        });
+
+        appRepo.saveAll(expiredApps);
+    }
     @Override
     public RestResponse<ListResponse<ApplicationResponse>> getListApplicationByFilter(
             int page,
@@ -113,7 +130,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         app.setInsuredData(insuredJson);
 
         app.setTotalPremium(quote.getPremium());
-        app.setStatus(ApplicationStatus.PREPARE);
+        app.setStatus(ApplicationStatus.SUBMITTED);
         app.setCreatedAt(LocalDateTime.now());
         app.setUpdatedAt(LocalDateTime.now());
 
@@ -128,7 +145,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         Application app = appRepo.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        app.setStatus(status);
+        app.setStatus(ApplicationStatus.valueOf(status.name()));
         app.setUpdatedAt(LocalDateTime.now());
 
         appRepo.save(app);
@@ -145,4 +162,8 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         return RestResponse.ok(mapper.toResponse(app));
     }
+
+
+
+
 }
