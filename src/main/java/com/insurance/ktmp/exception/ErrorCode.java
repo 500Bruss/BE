@@ -44,7 +44,12 @@ public enum ErrorCode {
 
     //Application
     APPLICATION_NOT_FOUND("PRODUCT_001", "Application not found", HttpStatus.NOT_FOUND),
+    APPLICATION_SEARCH_FIELDS("APPLICATION_001", "Search not found ", HttpStatus.NOT_FOUND),
+
+    //Quote
+    QUOTE_NOT_FOUND("QUOTE_001", "Quote not found", HttpStatus.NOT_FOUND),
     ;
+
 
     ErrorCode(String code, String message, HttpStatus statusCode) {
         this.code = code;

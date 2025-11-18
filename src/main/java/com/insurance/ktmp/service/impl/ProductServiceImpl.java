@@ -107,7 +107,7 @@ public class ProductServiceImpl implements IProductService {
 
         // 2. (Optional) load user để ghi audit: updated_by
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         product.setUpdatedBy(user);
         product.setUpdatedAt(LocalDateTime.now());

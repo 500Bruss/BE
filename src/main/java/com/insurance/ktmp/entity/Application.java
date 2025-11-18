@@ -1,5 +1,6 @@
 package com.insurance.ktmp.entity;
 
+import com.insurance.ktmp.enums.ApplicationStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Application {
     @Id
     private Long id;
@@ -37,8 +39,10 @@ public class Application {
     @Column(columnDefinition = "JSON")
     private String insuredData;
 
-    @Column(nullable = false, length = 30)
-    private String status;
+
+    @Column(nullable = false, length = 30, columnDefinition = "VARCHAR(30) DEFAULT 'ACTIVE'")
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status;
 
     @Column(nullable = false, precision = 15, scale = 2, columnDefinition = "DECIMAL(15,2) DEFAULT 0")
     private BigDecimal totalPremium;

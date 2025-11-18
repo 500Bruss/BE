@@ -14,5 +14,10 @@ public interface ApplicationMapper {
     @Mapping(target = "quoteId", source = "quote.id")
     @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "userId", source = "user.id")
+    // map enum -> String
+    @Mapping(target = "status", expression = "java(application.getStatus().name())")
+
+    // map totalPremium
+    @Mapping(target = "totalPremium", source = "totalPremium")
     ApplicationResponse toResponse(Application application);
 }
