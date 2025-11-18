@@ -35,6 +35,7 @@ public class Addon {
     private BigDecimal price;
 
     @Column(nullable = false, length = 30, columnDefinition = "VARCHAR(30) DEFAULT 'ACTIVE'")
+    @Enumerated(EnumType.STRING)
     private AddOnsStatus status;
 
     @Column(columnDefinition = "JSON")

@@ -75,21 +75,14 @@ public class AddonController extends BaseController {
     }
 
     // ========================= UPDATE STATUS (có user check) ================
-    @PutMapping("/{addonId}/status/{status}")
+    @GetMapping("/{addonId}/status/{status}")
     public ResponseEntity<RestResponse<String>> updateAddonStatus(
             @PathVariable Long addonId,
             @PathVariable String status,
             HttpServletRequest request
     ) {
         Long userId = extractUserIdFromRequest(request);
-
-        RestResponse<Void> result =
-                status.equalsIgnoreCase("ACTIVE")
-                        ? addonService.markAsActive(addonId)
-                        : addonService.markAsInactive(addonId);
-
-        return ResponseEntity.ok(
-                RestResponse.ok("Addon marked as " + status.toUpperCase())
-        );
+        RestResponse<String> response = addonService.updateAddonVisible(addonId, userId, status);
+        return ResponseEntity.ok(response);
     }
 }

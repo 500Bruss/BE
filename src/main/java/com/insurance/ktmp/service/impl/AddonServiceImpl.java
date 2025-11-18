@@ -1,6 +1,7 @@
 package com.insurance.ktmp.service.impl;
 
 import com.insurance.ktmp.common.IdGenerator;
+import com.insurance.ktmp.common.PredefinedRole;
 import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.common.SearchHelper;
 import com.insurance.ktmp.dto.request.AddonsCreationRequest;
@@ -9,12 +10,14 @@ import com.insurance.ktmp.dto.response.AddonsResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.entity.Addon;
 import com.insurance.ktmp.entity.Product;
+import com.insurance.ktmp.entity.User;
 import com.insurance.ktmp.enums.AddOnsStatus;
 import com.insurance.ktmp.exception.AppException;
 import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.mapper.AddonMapper;
 import com.insurance.ktmp.repository.AddonRepository;
 import com.insurance.ktmp.repository.ProductRepository;
+import com.insurance.ktmp.repository.UserRepository;
 import com.insurance.ktmp.service.IAddonService;
 
 import io.github.perplexhub.rsql.RSQLJPASupport;
@@ -37,7 +40,7 @@ public class AddonServiceImpl implements IAddonService {
     AddonRepository addonRepository;
     ProductRepository productRepository;
     AddonMapper addonMapper;
-
+    UserRepository userRepository;
     private static final List<String> SEARCH_FIELDS = List.of("status", "code", "name");
 
     @Override
@@ -66,17 +69,16 @@ public class AddonServiceImpl implements IAddonService {
 
         return RestResponse.ok(addonMapper.toAddonsResponse(addon));
     }
-
     @Override
     public RestResponse<AddonsResponse> updateAddon(Long id, AddonsUpdateRequest request) {
 
         Addon addon = addonRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException("Addon not found"));
 
         addon.setName(request.getName());
         addon.setDescription(request.getDescription());
         addon.setPrice(request.getPrice());
-        addon.setStatus(request.getStatus());
+        addon.setStatus(request.getStatus()); // ENUM nên không .name()
         addon.setMetaData(request.getMetaData());
         addon.setUpdatedAt(LocalDateTime.now());
 
@@ -84,6 +86,35 @@ public class AddonServiceImpl implements IAddonService {
 
         return RestResponse.ok(addonMapper.toAddonsResponse(addon));
     }
+
+
+    @Override
+    public RestResponse<String> updateAddonVisible(Long id, Long userId, String status) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (!user.getRole().stream()
+                .anyMatch(role -> role.getName().equals(PredefinedRole.ADMIN_ROLE))) {
+            throw new AppException(ErrorCode.UNAUTHORIZED_TO_UPDATE_THIS_RESOURCE);
+        }
+
+        // 3. Tìm Addon
+        Addon addon = addonRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
+
+        // 4. Update status (Enum AddOnsStatus)
+        AddOnsStatus newStatus = AddOnsStatus.valueOf(status.toUpperCase());
+        addon.setStatus(newStatus);
+
+        addon.setUpdatedAt(LocalDateTime.now());
+        addonRepository.save(addon);
+
+        return RestResponse.ok(
+                "Addon marked as %s".formatted(newStatus.name())
+        );
+    }
+
 
     @Override
     public RestResponse<AddonsResponse> getAddonById(Long id) {
