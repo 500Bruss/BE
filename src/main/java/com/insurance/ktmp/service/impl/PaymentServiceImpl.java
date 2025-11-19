@@ -15,6 +15,7 @@ import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.repository.ApplicationRepository;
 import com.insurance.ktmp.repository.PaymentRepository;
 import com.insurance.ktmp.service.IPaymentService;
+import com.insurance.ktmp.service.IPolicyService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.NonFinal;
@@ -35,6 +36,7 @@ public class PaymentServiceImpl implements IPaymentService {
     private final PaymentRepository paymentRepository;
     private final ApplicationRepository applicationRepository;
     private final VnPayService vnPayService;
+    private final IPolicyService policyService;
 
     @Value("${vnpay.secretKey}")
     String secretKey;
@@ -147,6 +149,8 @@ public class PaymentServiceImpl implements IPaymentService {
 
         paymentRepository.save(payment);
         applicationRepository.save(application);
+
+        policyService.createPolicy(application.getId(), 898454043L);
 
         return RestResponse.ok("Thanh toán " + ("00".equals(responseCode) ? "thành công" : "thất bại"));
     }

@@ -12,6 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -37,6 +40,14 @@ public class SecurityConfig {
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 );
+        httpSecurity.cors(cors -> cors.configurationSource(request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedOrigins(List.of("http://localhost:5173"));
+            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+            config.setAllowedHeaders(List.of("*"));
+            config.setAllowCredentials(true);
+            return config;
+        }));
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }

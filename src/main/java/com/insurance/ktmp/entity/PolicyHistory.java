@@ -1,9 +1,6 @@
 package com.insurance.ktmp.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PolicyHistory {
     @Id
     private Long id;
