@@ -23,23 +23,6 @@ public class PolicyController extends BaseController {
 
     private final IPolicyService policyService;
 
-    @PostMapping
-    public ResponseEntity<RestResponse<PolicyResponse>> createPolicy(
-            @RequestBody PolicyCreationRequest request,
-            HttpServletRequest httpReq
-    ) {
-        Long userId = extractUserIdFromRequest(httpReq);
-        RestResponse<PolicyResponse>response= policyService.createPolicy( request.getApplicationId(), userId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<RestResponse<PolicyResponse>> getPolicy(@PathVariable Long id) {
-        return ResponseEntity.ok(policyService.getPolicyById(id));
-    }
-
-    // ========== UPDATE STATUS ==========
-
     @PutMapping("/{id}/status/{status}")
     public ResponseEntity<RestResponse<String>> updateStatus(
             @PathVariable Long id,

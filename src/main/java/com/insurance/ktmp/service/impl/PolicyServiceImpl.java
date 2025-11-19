@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
@@ -53,16 +54,14 @@ public class PolicyServiceImpl implements IPolicyService {
     @Override
     public RestResponse<PolicyResponse> createPolicy(Long applicationId, Long userId) {
 
-        // 1. Check user và quyền Admin
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
         checkAdminRole(user);
 
-        // 2. Lấy application
         Application app = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
 
-        // 3. Tạo policy DRAFT
         Policy policy = new Policy();
         policy.setId(IdGenerator.generateRandomId());
         policy.setPolicyNumber(POLICY_PREFIX + System.currentTimeMillis()); // Sử dụng PREFIX
@@ -71,67 +70,47 @@ public class PolicyServiceImpl implements IPolicyService {
         policy.setProduct(app.getProduct());
         policy.setPolicyData(app.getApplicantData());
         policy.setStartDate(LocalDateTime.now());
-        policy.setEndDate(LocalDateTime.now().plusYears(1));
+        policy.setEndDate(LocalDateTime.now().plusMinutes(5)); //todo: plusYear
         policy.setPremiumTotal(app.getTotalPremium());
 
         // Cải tiến: Sử dụng Enum trực tiếp nếu Policy Entity được cấu hình đúng
-        policy.setStatus(PolicyStatus.DRAFT.name());
+        policy.setStatus(PolicyStatus.ACTIVE.name());
 
         policy.setCreatedAt(LocalDateTime.now());
         policy.setUpdatedAt(LocalDateTime.now());
         policyRepository.save(policy);
 
-        // 4. Ghi history
-        PolicyHistory history = new PolicyHistory();
-        history.setId(IdGenerator.generateRandomId());
-        history.setPolicy(policy);
-        history.setChangedBy(user);
-        history.setOldStatus(null);
-        history.setNewStatus(PolicyStatus.DRAFT.name());
-        history.setChangedAt(LocalDateTime.now());
-        history.setNote("Policy created in DRAFT");
-        policyHistoryRepository.save(history);
+        createPolicyHistory(policy, null, PolicyStatus.ACTIVE.name(), "Policy created in ACTIVE");
 
         return RestResponse.ok(policyMapper.toPolicyResponse(policy));
     }
 
-
-    @Override
-    public RestResponse<PolicyResponse> getPolicyById(Long id) {
-        // Dòng này đã được sửa lỗi NullPointerException nhờ việc thêm 'final'
-        Policy policy = policyRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
-
-        return RestResponse.ok(policyMapper.toPolicyResponse(policy));
+    private void createPolicyHistory(Policy policy, String oldStatus, String newStatus, String note) {
+        PolicyHistory policyHistory = PolicyHistory.builder()
+                .id(IdGenerator.generateRandomId())
+                .policy(policy)
+                .changedBy(policy.getUser())
+                .oldStatus(oldStatus)
+                .newStatus(newStatus)
+                .changedAt(LocalDateTime.now())
+                .note(note)
+                .build();
+        policyHistoryRepository.save(policyHistory);
     }
 
-
     @Override
-    public RestResponse<String> activatePolicy(Long policyId, Long userId) {
-        return updatePolicyStatus(policyId, PolicyStatus.ACTIVE.name(), userId);
-    }
-
-
-    @Override
-    public RestResponse<String> expirePolicy(Long policyId, Long userId) {
-        return updatePolicyStatus(policyId, PolicyStatus.EXPIRED.name(), userId);
-    }
-
-
-    @Override
-    public RestResponse<String> cancelPolicy(Long policyId, Long userId) {
-        return updatePolicyStatus(policyId, PolicyStatus.CANCELLED.name(), userId);
+    @Scheduled(fixedRate = 60000)
+    public RestResponse<String> expirePolicy(Long policyId) {
+        return updatePolicyStatus(policyId, PolicyStatus.EXPIRED.name(), 898454043L);
     }
 
     @Override
     public RestResponse<String> updatePolicyStatus(Long policyId, String newStatus, Long userId) {
 
-        // 1. Check user và quyền ADMIN
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         checkAdminRole(user); // Tái sử dụng hàm kiểm tra quyền
 
-        // 2. Parse enum
         PolicyStatus statusEnum;
         try {
             statusEnum = PolicyStatus.valueOf(newStatus.toUpperCase());
@@ -139,28 +118,17 @@ public class PolicyServiceImpl implements IPolicyService {
             throw new AppException(ErrorCode.BUSINESS_INVALID_SEQUENCE);
         }
 
-        // 3. Lấy policy
         Policy policy = policyRepository.findById(policyId)
                 .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
 
         String oldStatus = policy.getStatus();
 
-        // 4. Update
         policy.setStatus(statusEnum.name());
         policy.setUpdatedAt(LocalDateTime.now());
         policyRepository.save(policy);
 
-        // 5. Ghi history
-        PolicyHistory history = new PolicyHistory();
-        history.setId(IdGenerator.generateRandomId());
-        history.setPolicy(policy);
-        history.setChangedBy(user);
-        history.setOldStatus(oldStatus);
-        history.setNewStatus(statusEnum.name());
-        history.setChangedAt(LocalDateTime.now());
-        history.setNote("Status updated to " + statusEnum.name());
-
-        policyHistoryRepository.save(history);
+        createPolicyHistory(policy, oldStatus, statusEnum.name()
+                , "Status updated to " + statusEnum.name());
 
         return RestResponse.ok("Policy updated to " + statusEnum.name());
     }
