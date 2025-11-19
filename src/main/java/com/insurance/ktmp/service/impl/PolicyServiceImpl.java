@@ -3,10 +3,10 @@ package com.insurance.ktmp.service.impl;
 import com.insurance.ktmp.common.IdGenerator;
 import com.insurance.ktmp.common.PredefinedRole;
 import com.insurance.ktmp.common.RestResponse;
-import com.insurance.ktmp.dto.request.PolicyCreationRequest;
+import com.insurance.ktmp.common.SearchHelper;
+import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.dto.response.PolicyResponse;
 import com.insurance.ktmp.entity.*;
-import com.insurance.ktmp.entity.User;
 import com.insurance.ktmp.enums.PolicyStatus;
 import com.insurance.ktmp.exception.AppException;
 import com.insurance.ktmp.exception.ErrorCode;
@@ -15,53 +15,57 @@ import com.insurance.ktmp.repository.*;
 import com.insurance.ktmp.service.IPolicyService;
 import io.github.perplexhub.rsql.RSQLJPASupport;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.insurance.ktmp.repository.PolicyHistoryRepository;
+
 @Service
 @RequiredArgsConstructor
-
 public class PolicyServiceImpl implements IPolicyService {
 
-    PolicyRepository policyRepository;
-    ApplicationRepository applicationRepository;
-    UserRepository userRepository;
-    ProductRepository productRepository;
-    PolicyHistoryRepository policyHistoryRepository;
-    PolicyMapper policyMapper;
+    // SỬA LỖI: Thêm 'final' để @RequiredArgsConstructor (Lombok) tạo Constructor Injection
+    private final PolicyRepository policyRepository;
+    private final ApplicationRepository applicationRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final PolicyHistoryRepository policyHistoryRepository;
+    private final PolicyMapper policyMapper; // Đảm bảo PolicyMapper là @Component/Mapper
 
     private static final String POLICY_PREFIX = "PL-";
     private static final List<String> SEARCH_FIELDS = List.of("status");
+
+    /**
+     * Helper method để kiểm tra quyền Admin
+     */
+    private void checkAdminRole(User user) {
+        if (!user.getRole().stream()
+                .anyMatch(role -> role.getName().equals(PredefinedRole.ADMIN_ROLE))) {
+            throw new AppException(ErrorCode.UNAUTHORIZED_TO_UPDATE_THIS_RESOURCE);
+        }
+    }
 
 
     @Override
     public RestResponse<PolicyResponse> createPolicy(Long applicationId, Long userId) {
 
-        // 1. Check user
+        // 1. Check user và quyền Admin
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        checkAdminRole(user);
 
-        // 2. Check role admin
-        if (!user.getRole().stream()
-                .anyMatch(role -> role.getName().equals(PredefinedRole.ADMIN_ROLE))) {
-            throw new AppException(ErrorCode.UNAUTHORIZED_TO_UPDATE_THIS_RESOURCE);
-        }
-
-        // 3. Lấy application
+        // 2. Lấy application
         Application app = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
 
-        // 4. Tạo policy DRAFT
+        // 3. Tạo policy DRAFT
         Policy policy = new Policy();
         policy.setId(IdGenerator.generateRandomId());
-        policy.setPolicyNumber("PL-" + System.currentTimeMillis());
+        policy.setPolicyNumber(POLICY_PREFIX + System.currentTimeMillis()); // Sử dụng PREFIX
         policy.setApplication(app);
         policy.setUser(app.getUser());
         policy.setProduct(app.getProduct());
@@ -69,12 +73,15 @@ public class PolicyServiceImpl implements IPolicyService {
         policy.setStartDate(LocalDateTime.now());
         policy.setEndDate(LocalDateTime.now().plusYears(1));
         policy.setPremiumTotal(app.getTotalPremium());
+
+        // Cải tiến: Sử dụng Enum trực tiếp nếu Policy Entity được cấu hình đúng
         policy.setStatus(PolicyStatus.DRAFT.name());
+
         policy.setCreatedAt(LocalDateTime.now());
         policy.setUpdatedAt(LocalDateTime.now());
         policyRepository.save(policy);
 
-        // 5. history
+        // 4. Ghi history
         PolicyHistory history = new PolicyHistory();
         history.setId(IdGenerator.generateRandomId());
         history.setPolicy(policy);
@@ -91,6 +98,7 @@ public class PolicyServiceImpl implements IPolicyService {
 
     @Override
     public RestResponse<PolicyResponse> getPolicyById(Long id) {
+        // Dòng này đã được sửa lỗi NullPointerException nhờ việc thêm 'final'
         Policy policy = policyRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
 
@@ -118,17 +126,12 @@ public class PolicyServiceImpl implements IPolicyService {
     @Override
     public RestResponse<String> updatePolicyStatus(Long policyId, String newStatus, Long userId) {
 
-        // 1. Check user có tồn tại chưa
+        // 1. Check user và quyền ADMIN
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        checkAdminRole(user); // Tái sử dụng hàm kiểm tra quyền
 
-        // 2. Check quyền ADMIN
-        if (!user.getRole().stream()
-                .anyMatch(role -> role.getName().equals(PredefinedRole.ADMIN_ROLE))) {
-            throw new AppException(ErrorCode.UNAUTHORIZED_TO_UPDATE_THIS_RESOURCE);
-        }
-
-        // 3. Parse enum
+        // 2. Parse enum
         PolicyStatus statusEnum;
         try {
             statusEnum = PolicyStatus.valueOf(newStatus.toUpperCase());
@@ -136,18 +139,18 @@ public class PolicyServiceImpl implements IPolicyService {
             throw new AppException(ErrorCode.BUSINESS_INVALID_SEQUENCE);
         }
 
-        // 4. Lấy policy
+        // 3. Lấy policy
         Policy policy = policyRepository.findById(policyId)
                 .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
 
         String oldStatus = policy.getStatus();
 
-        // 5. Update
+        // 4. Update
         policy.setStatus(statusEnum.name());
         policy.setUpdatedAt(LocalDateTime.now());
         policyRepository.save(policy);
 
-        // 6. Ghi history
+        // 5. Ghi history
         PolicyHistory history = new PolicyHistory();
         history.setId(IdGenerator.generateRandomId());
         history.setPolicy(policy);
@@ -161,5 +164,21 @@ public class PolicyServiceImpl implements IPolicyService {
 
         return RestResponse.ok("Policy updated to " + statusEnum.name());
     }
-}
+    @Override
+    public RestResponse<ListResponse<PolicyResponse>> getPolicyListByFilter(
+            int page, int size, String sort, String filter, String search, boolean all
+    ) {
+        Specification<Policy> sortable = RSQLJPASupport.toSort(sort);
+        Specification<Policy> filterable = RSQLJPASupport.toSpecification(filter);
+        Specification<Policy> searchable = SearchHelper.parseSearchToken(search, SEARCH_FIELDS);
 
+        Pageable pageable = all ? Pageable.unpaged() : PageRequest.of(page - 1, size);
+
+        Page<PolicyResponse> responses = policyRepository
+                .findAll(sortable.and(filterable).and(searchable), pageable)
+                .map(policyMapper::toPolicyResponse);
+
+        return RestResponse.ok(ListResponse.of(responses));
+    }
+
+}

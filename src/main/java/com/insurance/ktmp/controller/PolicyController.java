@@ -28,7 +28,7 @@ public class PolicyController extends BaseController {
             HttpServletRequest httpReq
     ) {
         Long userId = extractUserIdFromRequest(httpReq);
-        RestResponse<PolicyResponse>response= policyService.createPolicy(userId, request.getApplicationId());
+        RestResponse<PolicyResponse>response= policyService.createPolicy( request.getApplicationId(), userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -47,5 +47,18 @@ public class PolicyController extends BaseController {
     ) {
         Long userId = extractUserIdFromRequest(req);
         return ResponseEntity.ok(policyService.updatePolicyStatus(id, status, userId));
+    }
+    @GetMapping
+    public ResponseEntity<RestResponse<ListResponse<PolicyResponse>>> getPolicyList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort,
+            @RequestParam(required = false) String filter,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) boolean all
+    ) {
+        return ResponseEntity.ok(
+                policyService.getPolicyListByFilter(page, size, sort, filter, search, all)
+        );
     }
 }

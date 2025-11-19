@@ -19,4 +19,12 @@ public interface IPolicyService {
     RestResponse<String> cancelPolicy(Long policyId, Long userId);
 
     RestResponse<String> updatePolicyStatus(Long id, String status, Long userId);
+    RestResponse<ListResponse<PolicyResponse>> getPolicyListByFilter(
+            int page,
+            int size,
+            String sort,
+            String filter,
+            String search,
+            boolean all
+    );
 }
