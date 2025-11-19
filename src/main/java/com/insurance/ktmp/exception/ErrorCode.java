@@ -48,6 +48,14 @@ public enum ErrorCode {
 
     //Quote
     QUOTE_NOT_FOUND("QUOTE_001", "Quote not found", HttpStatus.NOT_FOUND),
+
+    //Payment
+    REFUND_FAILED("REFUND_001", "Refund failed", HttpStatus.SERVICE_UNAVAILABLE),
+    PAYMENT_NOT_FOUND("PAYMENT_001", "Payment not found", HttpStatus.NOT_FOUND),
+
+    //POLICY
+    POLICY_NOT_FOUND("POLICY_001", "Policy not found", HttpStatus.NOT_FOUND),
+    CLAIM_NOT_FOUND("CLAIM_001", "Claim not found", HttpStatus.NOT_FOUND),
     ;
 
 

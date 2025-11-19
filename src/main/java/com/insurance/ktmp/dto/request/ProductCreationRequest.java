@@ -24,7 +24,7 @@ public class ProductCreationRequest {
     @NonNull
     BigDecimal price;
     String baseCover;
-    String metadata;
+    String metaData;
 
     List<AddonsCreationRequest> listAddOns;
 }

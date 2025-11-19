@@ -7,6 +7,7 @@ import com.insurance.ktmp.dto.response.ListResponse;
 
 import com.insurance.ktmp.dto.response.ProductResponse;
 
+
 import com.insurance.ktmp.service.IPolicyService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,6 +48,7 @@ public class PolicyController extends BaseController {
     ) {
         Long userId = extractUserIdFromRequest(req);
         return ResponseEntity.ok(policyService.updatePolicyStatus(id, status, userId));
+
     }
     @GetMapping
     public ResponseEntity<RestResponse<ListResponse<PolicyResponse>>> getPolicyList(
@@ -61,4 +63,5 @@ public class PolicyController extends BaseController {
                 policyService.getPolicyListByFilter(page, size, sort, filter, search, all)
         );
     }
+
 }

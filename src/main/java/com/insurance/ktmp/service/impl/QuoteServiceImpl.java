@@ -20,11 +20,13 @@ import com.insurance.ktmp.repository.UserRepository;
 import com.insurance.ktmp.service.IQuoteService;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.json.JSONParser;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,13 @@ public class QuoteServiceImpl implements IQuoteService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
+        Optional<Quote> exitedQuote = quoteRepository.findByUser_IdAndStatus(userId, QuoteStatus.CALCULATED);
+        if (exitedQuote.isPresent()) {
+            exitedQuote.get().setStatus(QuoteStatus.EXPIRED);
+            exitedQuote.get().setUpdatedAt(LocalDateTime.now());
+            quoteRepository.save(exitedQuote.get());
+        }
+
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.DATASOURCE_NOT_FOUND));
 
@@ -50,7 +59,7 @@ public class QuoteServiceImpl implements IQuoteService {
             throw new AppException(ErrorCode.INVALID_INPUT_JSON);
         }
 
-        BigDecimal premium = calculatePremium(product.getCategory().getCode(), inputNode);
+        BigDecimal premium = product.getPrice().add(calculatePremium(product.getCategory().getCode(), inputNode));
 
         Quote quote = Quote.builder()
                 .id(IdGenerator.generateRandomId())
@@ -65,7 +74,7 @@ public class QuoteServiceImpl implements IQuoteService {
                 .createdBy(user)
                 .build();
 
-        return  RestResponse.ok(quoteMapper.toQuoteResponse(quote));
+        return  RestResponse.ok(quoteMapper.toQuoteResponse(quoteRepository.save(quote)));
     }
 
     private BigDecimal calculatePremium(String productType, JsonNode input) {

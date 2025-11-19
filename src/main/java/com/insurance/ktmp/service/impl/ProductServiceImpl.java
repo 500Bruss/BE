@@ -72,6 +72,8 @@ public class ProductServiceImpl implements IProductService {
                 .price(request.getPrice())
                 .description(request.getDescription())
                 .visible(true)
+                .baseCover(request.getBaseCover())
+                .metaData(request.getMetaData())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .createdBy(user)
@@ -154,7 +156,7 @@ public class ProductServiceImpl implements IProductService {
         }
 
         if (request.getMetadata() != null) {
-            product.setMetadata(request.getMetadata());
+            product.setMetaData(request.getMetadata());
         }
 
         // ====== UPDATE CATEGORY ======

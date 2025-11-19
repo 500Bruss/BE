@@ -13,6 +13,7 @@ import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.entity.Quote;
 import com.insurance.ktmp.entity.User;
 import com.insurance.ktmp.enums.ApplicationStatus;
+import com.insurance.ktmp.enums.QuoteStatus;
 import com.insurance.ktmp.exception.AppException;
 import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.mapper.ApplicationMapper;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,7 +50,23 @@ public class ApplicationServiceImpl implements IApplicationService {
             "insuredData",
             "status"
     };
+    @Scheduled(cron = "0 */5 * * * *")
+    public void autoCancelApplications() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime threshold = now.minusMinutes(5);
 
+        List<Application> expiredApps =
+                appRepo.findByStatusAndCreatedAtBefore(ApplicationStatus.SUBMITTED, threshold);
+
+        if (expiredApps.isEmpty()) return;
+
+        expiredApps.forEach(app -> {
+            app.setStatus(ApplicationStatus.CANCELLED);
+            app.setUpdatedAt(now);
+        });
+
+        appRepo.saveAll(expiredApps);
+    }
     @Override
     public RestResponse<ListResponse<ApplicationResponse>> getListApplicationByFilter(
             int page,
@@ -80,7 +98,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        Quote quote = quoteRepo.findById(quoteId)
+        Quote quote = quoteRepo.findByIdAndUser_IdAndStatus(quoteId, userId, QuoteStatus.CALCULATED)
                 .orElseThrow(() -> new AppException(ErrorCode.QUOTE_NOT_FOUND));
 
         if (!quote.getUser().getId().equals(userId)) {
@@ -113,11 +131,15 @@ public class ApplicationServiceImpl implements IApplicationService {
         app.setInsuredData(insuredJson);
 
         app.setTotalPremium(quote.getPremium());
-        app.setStatus(ApplicationStatus.PREPARE);
+        app.setStatus(ApplicationStatus.SUBMITTED);
         app.setCreatedAt(LocalDateTime.now());
         app.setUpdatedAt(LocalDateTime.now());
 
         appRepo.save(app);
+
+        quote.setStatus(QuoteStatus.CONFIRMED);
+        quote.setUpdatedAt(LocalDateTime.now());
+        quoteRepo.save(quote);
 
         return RestResponse.ok(mapper.toResponse(app));
     }
@@ -128,7 +150,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         Application app = appRepo.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        app.setStatus(status);
+        app.setStatus(ApplicationStatus.valueOf(status.name()));
         app.setUpdatedAt(LocalDateTime.now());
 
         appRepo.save(app);

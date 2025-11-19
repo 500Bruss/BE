@@ -5,6 +5,7 @@ import com.insurance.ktmp.dto.request.AddonsCreationRequest;
 import com.insurance.ktmp.dto.request.AddonsUpdateRequest;
 import com.insurance.ktmp.dto.response.AddonsResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
+import com.insurance.ktmp.dto.response.ProductResponse;
 import com.insurance.ktmp.enums.AddOnsStatus;
 import com.insurance.ktmp.service.IAddonService;
 
@@ -20,58 +21,25 @@ public class AddonController extends BaseController {
 
     private final IAddonService addonService;
 
-    // ========================= CREATE =========================
-    @PostMapping
-    public ResponseEntity<RestResponse<AddonsResponse>> createAddon(
-            @RequestBody AddonsCreationRequest request
+    @PostMapping("/{productId}")
+    public ResponseEntity<RestResponse<ProductResponse>> createAddon(
+            @PathVariable Long productId,
+            @RequestBody AddonsCreationRequest request,
+            HttpServletRequest httpReq
     ) {
-        return ResponseEntity.ok(addonService.createAddon(request));
+        Long userId = extractUserIdFromRequest(httpReq);
+        return ResponseEntity.ok(addonService.createAddon(userId, productId, request));
     }
 
     // ========================= UPDATE =========================
     @PutMapping("/{id}")
-    public ResponseEntity<RestResponse<AddonsResponse>> updateAddon(
+    public ResponseEntity<RestResponse<ProductResponse>> updateAddon(
             @PathVariable Long id,
-            @RequestBody AddonsUpdateRequest request
+            @RequestBody AddonsUpdateRequest request,
+            HttpServletRequest httpReq
     ) {
-        return ResponseEntity.ok(addonService.updateAddon(id, request));
-    }
-
-    // ========================= GET BY ID =========================
-    @GetMapping("/{id}")
-    public ResponseEntity<RestResponse<AddonsResponse>> getAddonById(
-            @PathVariable Long id
-    ) {
-        return ResponseEntity.ok(addonService.getAddonById(id));
-    }
-
-    // ========================= FILTER LIST ========================
-    @GetMapping
-    public ResponseEntity<RestResponse<ListResponse<AddonsResponse>>> getAddonList(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "createdAt,desc") String sort,
-            @RequestParam(required = false) String filter,
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false) boolean all
-    ) {
-        return ResponseEntity.ok(
-                addonService.getAddonListByFilter(page, size, sort, filter, search, all)
-        );
-    }
-
-    // ========================= INACTIVE =========================
-    @PutMapping("/{id}/inactive")
-    public ResponseEntity<RestResponse<String>> markAsInactive(@PathVariable Long id) {
-        addonService.markAsInactive(id);
-        return ResponseEntity.ok(RestResponse.ok("Addon marked as INACTIVE"));
-    }
-
-    // ========================= ACTIVE =========================
-    @PutMapping("/{id}/active")
-    public ResponseEntity<RestResponse<String>> markAsActive(@PathVariable Long id) {
-        addonService.markAsActive(id);
-        return ResponseEntity.ok(RestResponse.ok("Addon marked as ACTIVE"));
+        Long userId = extractUserIdFromRequest(httpReq);
+        return ResponseEntity.ok(addonService.updateAddon(userId, id, request));
     }
 
     // ========================= UPDATE STATUS (có user check) ================

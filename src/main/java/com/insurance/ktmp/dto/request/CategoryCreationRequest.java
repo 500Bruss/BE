@@ -1,5 +1,6 @@
 package com.insurance.ktmp.dto.request;
 
+import com.insurance.ktmp.enums.CategoryStatus;
 import com.insurance.ktmp.enums.ProductStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,11 +10,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
 public class CategoryCreationRequest {
     String code;
     String name;
     String description;
-    ProductStatus status;
+    CategoryStatus status;
     String metaData;
 }
