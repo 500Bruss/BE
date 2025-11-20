@@ -44,8 +44,11 @@ public class Product {
     @Column(name = "meta_data", columnDefinition = "JSON")
     private String metaData;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Addon> items = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Addon> addons;
+
+
+
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

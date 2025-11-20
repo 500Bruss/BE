@@ -23,7 +23,7 @@ import com.insurance.ktmp.repository.ApplicationRepository;
 
 import com.insurance.ktmp.repository.QuoteRepository;
 import com.insurance.ktmp.repository.PolicyRepository;
-import com.insurance.ktmp.repository.HisPolicyRepository;
+
 import com.insurance.ktmp.repository.UserRepository;
 import com.insurance.ktmp.service.IApplicationService;
 import io.github.perplexhub.rsql.RSQLJPASupport;
@@ -45,7 +45,7 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     private final ApplicationRepository appRepo;
     private final QuoteRepository quoteRepo;
-    private final ProductRepository productRepo;
+
     private final UserRepository userRepo;
     private final ApplicationMapper mapper;
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON converter
