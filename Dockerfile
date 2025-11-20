@@ -5,6 +5,9 @@ WORKDIR /app
 
 COPY . .
 
+# Cấp quyền chạy cho mvnw
+RUN chmod +x mvnw
+
 # Build JAR với Maven Wrapper
 RUN ./mvnw clean package -DskipTests
 
