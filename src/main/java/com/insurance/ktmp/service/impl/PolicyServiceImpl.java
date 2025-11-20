@@ -99,9 +99,13 @@ public class PolicyServiceImpl implements IPolicyService {
     }
 
     @Override
-    @Scheduled(fixedRate = 60000)
-    public RestResponse<String> expirePolicy(Long policyId) {
-        return updatePolicyStatus(policyId, PolicyStatus.EXPIRED.name(), 898454043L);
+    @Scheduled(cron = "0 */7 * * * ?") // Chạy mỗi 7 phút
+    public RestResponse<String> expirePolicy() {
+        List<Policy> policies = policyRepository.findAllByEndDateBefore(LocalDateTime.now());
+        policies.forEach(policy -> {
+            updatePolicyStatus(policy.getId(), PolicyStatus.EXPIRED.name(), 898454043L);
+        });
+        return RestResponse.ok("Complete update policy status to expired");
     }
 
     @Override
