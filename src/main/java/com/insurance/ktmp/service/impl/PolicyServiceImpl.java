@@ -14,6 +14,7 @@ import com.insurance.ktmp.mapper.PolicyMapper;
 import com.insurance.ktmp.repository.*;
 import com.insurance.ktmp.service.IPolicyService;
 import io.github.perplexhub.rsql.RSQLJPASupport;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -101,19 +102,24 @@ public class PolicyServiceImpl implements IPolicyService {
     @Override
     @Scheduled(cron = "0 */7 * * * ?") // Chạy mỗi 7 phút
     public RestResponse<String> expirePolicy() {
-        List<Policy> policies = policyRepository.findAllByEndDateBefore(LocalDateTime.now());
+        List<Policy> policies = policyRepository
+                .findAllByEndDateBeforeAndStatus(LocalDateTime.now(), PolicyStatus.ACTIVE.name());
         policies.forEach(policy -> {
-            updatePolicyStatus(policy.getId(), PolicyStatus.EXPIRED.name(), 898454043L);
+            updatePolicyStatus(policy.getId(), PolicyStatus.EXPIRED.name(), 898454043L, true);
         });
         return RestResponse.ok("Complete update policy status to expired");
     }
 
     @Override
-    public RestResponse<String> updatePolicyStatus(Long policyId, String newStatus, Long userId) {
+    @Transactional
+    public RestResponse<String> updatePolicyStatus(Long policyId, String newStatus,
+                                                   Long userId, boolean isCronJob) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        checkAdminRole(user); // Tái sử dụng hàm kiểm tra quyền
+        if (!isCronJob) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            checkAdminRole(user); // Tái sử dụng hàm kiểm tra quyền
+        }
 
         PolicyStatus statusEnum;
         try {

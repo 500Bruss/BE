@@ -30,7 +30,7 @@ public class PolicyController extends BaseController {
             HttpServletRequest req
     ) {
         Long userId = extractUserIdFromRequest(req);
-        return ResponseEntity.ok(policyService.updatePolicyStatus(id, status, userId));
+        return ResponseEntity.ok(policyService.updatePolicyStatus(id, status, userId, false));
 
     }
     @GetMapping

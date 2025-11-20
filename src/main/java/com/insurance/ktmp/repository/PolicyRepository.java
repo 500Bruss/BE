@@ -11,5 +11,5 @@ import java.util.List;
 public interface PolicyRepository extends
         JpaRepository<Policy, Long>,
         JpaSpecificationExecutor<Policy> {
-    List<Policy> findAllByEndDateBefore(LocalDateTime currentDate);
+    List<Policy> findAllByEndDateBeforeAndStatus(LocalDateTime currentDate, String status);
 }

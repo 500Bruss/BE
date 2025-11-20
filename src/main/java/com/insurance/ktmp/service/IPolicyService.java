@@ -11,7 +11,7 @@ public interface IPolicyService {
 
     RestResponse<String> expirePolicy();
 
-    RestResponse<String> updatePolicyStatus(Long id, String status, Long userId);
+    RestResponse<String> updatePolicyStatus(Long id, String status, Long userId, boolean isCronJob);
     RestResponse<ListResponse<PolicyResponse>> getPolicyListByFilter(
             int page,
             int size,
