@@ -1,0 +1,30 @@
+version: '3.9'
+services:
+  insurance_db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: plmoknijb09
+      MYSQL_DATABASE: insurance_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql-init:/docker-entrypoint-initdb.d
+    restart: always
+
+  backend:
+    build: .
+    container_name: spring_backend
+    depends_on:
+      - insurance_db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://insurance_db:3306/insurance_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: plmoknijb09
+    ports:
+      - "8080:8080"
+    restart: always
+
+volumes:
+  mysql_data:
