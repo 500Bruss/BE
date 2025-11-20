@@ -62,5 +62,7 @@ public class ApplicationController extends BaseController {
         return ResponseEntity.ok(service.updateStatus(id, request.getStatus()));
     }
 
+
+
 }
 
