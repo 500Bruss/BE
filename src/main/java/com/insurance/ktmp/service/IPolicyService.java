@@ -9,7 +9,7 @@ public interface IPolicyService {
 
     RestResponse<PolicyResponse> createPolicy(Long applicationId, Long userId);
 
-    RestResponse<String> expirePolicy(Long policyId);
+    RestResponse<String> expirePolicy();
 
     RestResponse<String> updatePolicyStatus(Long id, String status, Long userId);
     RestResponse<ListResponse<PolicyResponse>> getPolicyListByFilter(
