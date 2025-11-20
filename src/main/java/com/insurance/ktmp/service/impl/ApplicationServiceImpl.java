@@ -5,21 +5,25 @@ import com.insurance.ktmp.common.IdGenerator;
 import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.common.SearchHelper;
 import com.insurance.ktmp.dto.request.ApplicationCreationRequest;
-import com.insurance.ktmp.dto.request.ApplicationStatusUpdateRequest;
+import com.insurance.ktmp.dto.request.ApplicationApprovalRequest;
 import com.insurance.ktmp.dto.response.ApplicationResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.entity.Application;
 import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.entity.Quote;
 import com.insurance.ktmp.entity.User;
+import com.insurance.ktmp.entity.Policy;
+import com.insurance.ktmp.entity.PolicyHistory;
 import com.insurance.ktmp.enums.ApplicationStatus;
 import com.insurance.ktmp.enums.QuoteStatus;
 import com.insurance.ktmp.exception.AppException;
 import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.mapper.ApplicationMapper;
 import com.insurance.ktmp.repository.ApplicationRepository;
-import com.insurance.ktmp.repository.ProductRepository;
+
 import com.insurance.ktmp.repository.QuoteRepository;
+import com.insurance.ktmp.repository.PolicyRepository;
+import com.insurance.ktmp.repository.HisPolicyRepository;
 import com.insurance.ktmp.repository.UserRepository;
 import com.insurance.ktmp.service.IApplicationService;
 import io.github.perplexhub.rsql.RSQLJPASupport;
@@ -30,10 +34,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class ApplicationServiceImpl implements IApplicationService {
@@ -167,4 +172,12 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         return RestResponse.ok(mapper.toResponse(app));
     }
+
+
+
+
+
+
+
+
 }

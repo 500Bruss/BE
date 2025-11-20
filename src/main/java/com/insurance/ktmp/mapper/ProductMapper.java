@@ -13,7 +13,8 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
-
+    @Mapping(source = "metadata", target = "metadata")
+    @Mapping(source = "baseCover", target = "baseCover")
     Product toProduct(ProductCreationRequest request);
 
     ProductResponse toProductResponse(Product product);
