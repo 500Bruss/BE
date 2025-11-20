@@ -57,4 +57,14 @@ public class ProductController extends BaseController{
         RestResponse<ProductResponse> response = productService.updateProduct(id, request);
         return ResponseEntity.ok(response);
     }
+
+    // ================== GET BY ID ==================
+    @GetMapping("/{id}")
+    public ResponseEntity<RestResponse<ProductResponse>> getProductById(@PathVariable Long id) {
+        RestResponse<ProductResponse> response = productService.getProductById(id);
+        return ResponseEntity.ok(response);
+    }
+
+
+
 }

@@ -26,8 +26,10 @@ public class ProductResponse {
     ProductStatus status;
     Boolean visible;
 
-    String metadata;
+    String metaData;     // <— dùng metaData đúng với entity
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+
     List<AddonsResponse> addonsList;
 }
+

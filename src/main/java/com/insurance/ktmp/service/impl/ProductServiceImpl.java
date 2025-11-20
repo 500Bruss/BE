@@ -123,13 +123,19 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public RestResponse<ProductResponse> getById(Long id) {
-        Product product = productRepository.findById(id)
+    public RestResponse<ProductResponse> getProductById(Long id) {
+
+        Product product = productRepository.findByIdWithAddons(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         ProductResponse response = productMapper.toProductResponse(product);
+
         return RestResponse.ok(response);
+
     }
+
+
+
 
     @Override
     public RestResponse<ProductResponse> updateProduct(Long id, ProductUpdateRequest request) {
