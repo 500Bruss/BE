@@ -100,7 +100,7 @@ public class PolicyServiceImpl implements IPolicyService {
     }
 
     @Override
-    @Scheduled(cron = "0 */7 * * * ?") // Chạy mỗi 7 phút
+    @Scheduled(cron = "0 */2 * * * ?") // Chạy mỗi 7 phút
     public RestResponse<String> expirePolicy() {
         List<Policy> policies = policyRepository
                 .findAllByEndDateBeforeAndStatus(LocalDateTime.now(), PolicyStatus.ACTIVE.name());

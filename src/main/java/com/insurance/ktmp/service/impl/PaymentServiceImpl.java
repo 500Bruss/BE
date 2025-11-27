@@ -84,9 +84,9 @@ public class PaymentServiceImpl implements IPaymentService {
         paymentRepository.save(payment);
 
         return PaymentResponse.builder()
-                .applicationId(payment.getApplication().getId())
-                .quoteId(payment.getQuote().getId())
-                .userId(payment.getUser().getId())
+                .applicationId(payment.getApplication().getId().toString())
+                .quoteId(payment.getQuote().getId().toString())
+                .userId(payment.getUser().getId().toString())
                 .userName(payment.getUser().getFullName())
                 .paymentMethod(payment.getPaymentMethod())
                 .amount(payment.getAmount())

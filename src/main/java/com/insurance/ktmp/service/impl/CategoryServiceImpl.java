@@ -148,7 +148,7 @@ public class CategoryServiceImpl implements ICategoryService {
 
     private CategoryResponse mapToResponse(Category category) {
         return CategoryResponse.builder()
-                .id(category.getId())
+                .id(category.getId().toString())
                 .code(category.getCode())
                 .name(category.getName())
                 .description(category.getDescription())

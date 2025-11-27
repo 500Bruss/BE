@@ -21,9 +21,8 @@ import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.mapper.ApplicationMapper;
 import com.insurance.ktmp.repository.ApplicationRepository;
 
+import com.insurance.ktmp.repository.ProductRepository;
 import com.insurance.ktmp.repository.QuoteRepository;
-import com.insurance.ktmp.repository.PolicyRepository;
-import com.insurance.ktmp.repository.HisPolicyRepository;
 import com.insurance.ktmp.repository.UserRepository;
 import com.insurance.ktmp.service.IApplicationService;
 import io.github.perplexhub.rsql.RSQLJPASupport;

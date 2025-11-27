@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryResponse {
-    Long id;
+    String id;
     String code;
     String name;
     String description;
