@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddonsResponse {
-    Long id;
-    Long productId;
+    String id;
+    String productId;
     String code;
     String name;
     String description;

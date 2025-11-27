@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ApplicationResponse {
-    Long id;
-    Long quoteId;
-    Long productId;
+    String id;
+    String quoteId;
+    String productId;
     String productName;
-    Long userId;
+    String userId;
     String userName;
     String applicantData;
     String insuredData;

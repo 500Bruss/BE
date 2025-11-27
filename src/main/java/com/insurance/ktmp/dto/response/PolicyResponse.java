@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PolicyResponse {
 
-    Long id;
+    String id;
     String policyNumber;
 
-    Long applicationId;
-    Long userId;
-    Long productId;
+    String applicationId;
+    String userId;
+    String productId;
 
     String policyData;
 

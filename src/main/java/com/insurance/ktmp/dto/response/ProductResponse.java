@@ -17,10 +17,10 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductResponse {
-    Long id;
+    String id;
     String name;
     String description;
-    Long categoryId;
+    String categoryId;
     BigDecimal price;
     String baseCover;
     ProductStatus status;

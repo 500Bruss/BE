@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ClaimResponse {
-    Long id;
-    Long policyId;
-    Long userId;
+    String id;
+    String policyId;
+    String userId;
     String userName;
     LocalDateTime incidentDate;
     LocalDateTime reportedAt;

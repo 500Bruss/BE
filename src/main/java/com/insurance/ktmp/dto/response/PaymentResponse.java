@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PaymentResponse {
-    Long applicationId;
-    Long quoteId;
-    Long userId;
+    String applicationId;
+    String quoteId;
+    String userId;
     String userName;
     PaymentMethod paymentMethod;
     BigDecimal amount;

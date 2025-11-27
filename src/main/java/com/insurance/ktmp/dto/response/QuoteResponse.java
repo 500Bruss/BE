@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class QuoteResponse {
-    Long id;
-    Long userId;
+    String id;
+    String userId;
     String userName;
-    Long productId;
+    String productId;
     String productName;
     String inputData;
     BigDecimal premium;
