@@ -6,6 +6,7 @@ import lombok.*;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "quotes")
@@ -32,9 +33,9 @@ public class Quote {
     @Column(nullable = false, precision = 15, scale = 2, columnDefinition = "DECIMAL(15,2) DEFAULT 0")
     private BigDecimal premium;
 
+    @OneToMany(mappedBy = "quote", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuoteItem> items;
 
-    @Column(columnDefinition = "JSON")
-    private String addonIds;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
