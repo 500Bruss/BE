@@ -2,6 +2,7 @@ package com.insurance.ktmp.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import java.util.List;
 
 @Data
 @Builder
@@ -11,4 +12,5 @@ import lombok.experimental.FieldDefaults;
 public class QuoteCreationRequest {
     Long productId;
     String inputData;
+    List<Long> selectedAddons;
 }

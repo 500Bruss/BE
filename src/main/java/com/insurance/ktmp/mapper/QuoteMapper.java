@@ -12,5 +12,6 @@ public interface QuoteMapper {
     @Mapping(target = "userName", source = "user.fullName")
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "productId", source = "product.id")
+    @Mapping(target = "selectedAddons", ignore = true)
     QuoteResponse toQuoteResponse(Quote quote);
 }

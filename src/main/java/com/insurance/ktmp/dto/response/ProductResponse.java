@@ -25,8 +25,7 @@ public class ProductResponse {
     String baseCover;
     ProductStatus status;
     Boolean visible;
-
-    String metadata;
+    String metaData;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     List<AddonsResponse> addonsList;

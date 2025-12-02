@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import com.insurance.ktmp.dto.response.ListResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -135,4 +136,21 @@ public class AddonServiceImpl implements IAddonService {
                 "Addon marked as %s".formatted(newStatus.name())
         );
     }
+
+    @Override
+    public ListResponse<AddonsResponse> getByProduct(Long productId) {
+        List<Addon> list = addonRepository.findByProductId(productId);
+        List<AddonsResponse> mapped = addonMapper.toResponseList(list);
+
+        return ListResponse.of(mapped);
+    }
+
+
+
+
+
+
+
+
+
 }

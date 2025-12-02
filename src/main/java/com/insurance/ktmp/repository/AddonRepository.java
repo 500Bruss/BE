@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface AddonRepository extends JpaRepository<Addon, Long>, JpaSpecificationExecutor<Addon> {
     boolean existsByCode(String code);
 
-    List<Addon> findByProduct_Id(Long productId);
+    List<Addon> findByProductId(Long productId);
 }

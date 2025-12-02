@@ -32,6 +32,10 @@ public class Quote {
     @Column(nullable = false, precision = 15, scale = 2, columnDefinition = "DECIMAL(15,2) DEFAULT 0")
     private BigDecimal premium;
 
+
+    @Column(columnDefinition = "JSON")
+    private String addonIds;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private QuoteStatus status;
