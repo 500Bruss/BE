@@ -17,4 +17,8 @@ public interface IAddonService {
 
     RestResponse<String> updateAddonVisible(Long addonId, Long userId, String status);
 
+    // NEW: user xem addons theo product
+    ListResponse<AddonsResponse> getByProduct(Long productId);
+
+
 }

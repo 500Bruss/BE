@@ -10,10 +10,12 @@ import com.insurance.ktmp.dto.response.ProductResponse;
 import com.insurance.ktmp.entity.Category;
 import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.entity.User;
+import com.insurance.ktmp.entity.Addon;
 import com.insurance.ktmp.enums.ProductStatus;
 import com.insurance.ktmp.exception.AppException;
 import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.mapper.ProductMapper;
+import com.insurance.ktmp.mapper.AddonMapper;
 import com.insurance.ktmp.repository.AddonRepository;
 import com.insurance.ktmp.repository.CategoryRepository;
 import com.insurance.ktmp.repository.ProductRepository;
@@ -42,7 +44,7 @@ public class ProductServiceImpl implements IProductService {
     private final UserRepository userRepository;
     private final AddonRepository addonRepository;
     private final ProductMapper productMapper;
-
+    private final AddonMapper addonMapper;
     @Override
     public RestResponse<ListResponse<ProductResponse>> getListProductsByFilter(int page, int size, String sort, String filter, String search, boolean all) {
         Specification<Product> sortable = RSQLJPASupport.toSort(sort);
@@ -128,7 +130,14 @@ public class ProductServiceImpl implements IProductService {
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         ProductResponse response = productMapper.toProductResponse(product);
+
+// map addonList từ Addon sang AddonsResponse
+        response.setAddonsList(
+                addonMapper.toResponseList(product.getItems())
+        );
+
         return RestResponse.ok(response);
+
     }
 
     @Override

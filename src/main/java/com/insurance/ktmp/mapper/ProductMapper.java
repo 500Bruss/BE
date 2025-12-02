@@ -15,9 +15,11 @@ import org.mapstruct.MappingTarget;
 public interface ProductMapper {
     @Mapping(source = "metaData", target = "metaData")
     @Mapping(source = "baseCover", target = "baseCover")
-    Product toProduct(ProductCreationRequest request);
-
+    @Mapping(source = "category.id", target = "categoryId")
+    @Mapping(source = "items", target = "addonsList")
     ProductResponse toProductResponse(Product product);
+
+    Product toProductResponse(ProductCreationRequest request);
 
     AddonsResponse toAddonsResponse(AddonsResponse response);
 

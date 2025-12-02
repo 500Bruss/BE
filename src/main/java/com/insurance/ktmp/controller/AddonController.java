@@ -53,4 +53,15 @@ public class AddonController extends BaseController {
         RestResponse<String> response = addonService.updateAddonVisible(addonId, userId, status);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping
+    public RestResponse<ListResponse<AddonsResponse>> getByProduct(
+            @RequestParam Long productId
+    ) {
+        return RestResponse.ok(addonService.getByProduct(productId));
+    }
+
+
+
+
 }
