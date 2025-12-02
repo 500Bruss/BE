@@ -11,6 +11,7 @@ import com.insurance.ktmp.dto.response.AddonsResponse;
 import com.insurance.ktmp.entity.Addon;
 import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.entity.Quote;
+import com.insurance.ktmp.entity.QuoteItem;
 import com.insurance.ktmp.entity.User;
 import com.insurance.ktmp.enums.QuoteStatus;
 import com.insurance.ktmp.exception.AppException;
@@ -19,6 +20,7 @@ import com.insurance.ktmp.mapper.QuoteMapper;
 import com.insurance.ktmp.repository.AddonRepository;
 import com.insurance.ktmp.repository.ProductRepository;
 import com.insurance.ktmp.repository.QuoteRepository;
+import com.insurance.ktmp.repository.QuoteItemRepository;
 import com.insurance.ktmp.repository.UserRepository;
 import com.insurance.ktmp.service.IQuoteService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,8 @@ public class QuoteServiceImpl implements IQuoteService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final AddonRepository addonRepository;
+    private final QuoteItemRepository quoteItemRepository;
+
     private final ObjectMapper objectMapper;
     private final QuoteMapper quoteMapper;
 
@@ -51,9 +55,10 @@ public class QuoteServiceImpl implements IQuoteService {
         /* ========== EXPIRE QUOTE CŨ ========== */
         Optional<Quote> existed = quoteRepository.findByUser_IdAndStatus(userId, QuoteStatus.CALCULATED);
         if (existed.isPresent()) {
-            existed.get().setStatus(QuoteStatus.EXPIRED);
-            existed.get().setUpdatedAt(LocalDateTime.now());
-            quoteRepository.save(existed.get());
+            Quote old = existed.get();
+            old.setStatus(QuoteStatus.EXPIRED);
+            old.setUpdatedAt(LocalDateTime.now());
+            quoteRepository.save(old);
         }
 
         /* ========== LOAD PRODUCT ========== */
@@ -68,17 +73,17 @@ public class QuoteServiceImpl implements IQuoteService {
             throw new AppException(ErrorCode.INVALID_INPUT_JSON);
         }
 
-        /* ========== TÍNH PHÍ SẢN PHẨM (PREMIUM) ========== */
+        /* ========== TÍNH PHÍ SẢN PHẨM (PREMIUM GỐC) ========== */
         BigDecimal basePremium = product.getPrice()
                 .add(calculatePremium(product.getCategory().getCode(), inputNode));
 
         /* ========== TÍNH PHÍ ADDON ========== */
         BigDecimal addonTotal = BigDecimal.ZERO;
-
         List<Long> addonIds = request.getSelectedAddons();
+        List<Addon> addons = List.of();  // 👈 Lưu list addon để dùng cho QuoteItem + Response
 
         if (addonIds != null && !addonIds.isEmpty()) {
-            List<Addon> addons = addonRepository.findAllById(addonIds);
+            addons = addonRepository.findAllById(addonIds);
 
             addonTotal = addons.stream()
                     .map(Addon::getPrice)
@@ -88,14 +93,12 @@ public class QuoteServiceImpl implements IQuoteService {
         /* ========== PREMIUM CUỐI CÙNG ========== */
         BigDecimal finalPremium = basePremium.add(addonTotal);
 
-        /* ========== LƯU QUOTE ========== */
-        /* ========== LƯU QUOTE ========== */
+        /* ========== LƯU QUOTE (CHƯA CÓ ITEMS) ========== */
         Quote quote = Quote.builder()
                 .id(IdGenerator.generateRandomId())
                 .user(user)
                 .product(product)
                 .inputData(inputNode.toString())
-                .addonIds(writeJsonSafe(addonIds))   // lưu addon đã chọn
                 .premium(finalPremium)
                 .status(QuoteStatus.CALCULATED)
                 .validUntil(LocalDateTime.now().plusMinutes(5))
@@ -106,13 +109,31 @@ public class QuoteServiceImpl implements IQuoteService {
 
         Quote saved = quoteRepository.save(quote);
 
+        /* ========== TẠO & LƯU QUOTE ITEMS TỪ ADDONS ========== */
+        if (!addons.isEmpty()) {
+            List<QuoteItem> items = addons.stream()
+                    .map(a -> {
+                        QuoteItem item = new QuoteItem();
+                        item.setId(IdGenerator.generateRandomId());
+                        item.setQuote(saved);
+                        item.setAddon(a);
+                        item.setName(a.getName());
+                        item.setQuantity(1); // tạm thời 1, sau này nếu người dùng chọn số lượng thì đổi
+                        item.setPrice(a.getPrice());
+                        item.setMetadata(a.getMetaData()); // snapshot metaData tại thời điểm tạo quote
+                        return item;
+                    })
+                    .toList();
+
+            quoteItemRepository.saveAll(items);
+            saved.setItems(items); // nếu bạn đã thêm List<QuoteItem> items trong Quote
+        }
+
         /* ========== MAP QUOTE → RESPONSE ========== */
         QuoteResponse response = quoteMapper.toQuoteResponse(saved);
 
-        /* ========== GẮN DANH SÁCH ADDON ĐÃ CHỌN ========== */
-        if (addonIds != null && !addonIds.isEmpty()) {
-            List<Addon> addons = addonRepository.findAllById(addonIds);
-
+        /* ========== GẮN DANH SÁCH ADDON ĐÃ CHỌN (CHO UI) ========== */
+        if (!addons.isEmpty()) {
             response.setSelectedAddons(
                     addons.stream().map(a -> AddonsResponse.builder()
                             .id(a.getId().toString())
@@ -128,7 +149,6 @@ public class QuoteServiceImpl implements IQuoteService {
         }
 
         return RestResponse.ok(response);
-
     }
 
 
