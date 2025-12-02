@@ -21,6 +21,7 @@ public class ProductResponse {
     String name;
     String description;
     String categoryId;
+    String categoryName;
     BigDecimal price;
     String baseCover;
     ProductStatus status;

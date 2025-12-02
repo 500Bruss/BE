@@ -6,6 +6,7 @@ import com.insurance.ktmp.common.PredefinedRole;
 import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.common.SearchHelper;
 import com.insurance.ktmp.dto.request.ClaimCreationRequest;
+import com.insurance.ktmp.dto.request.ClaimReviewRequest;
 import com.insurance.ktmp.dto.response.ClaimResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.entity.Claim;
@@ -27,7 +28,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -64,7 +67,7 @@ public class ClaimServiceImpl implements IClaimService {
                 .id(IdGenerator.generateRandomId())
                 .policy(policy)
                 .user(user)
-                .incidentDate(request.getIncidentDate())
+                .incidentDate(LocalDate.parse(request.getIncidentDate()).atStartOfDay())
                 .reportedAt(LocalDateTime.now())
                 .claimData(claimData)
                 .amountClaimed(request.getAmountClaimed())
@@ -73,6 +76,7 @@ public class ClaimServiceImpl implements IClaimService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+        claimRepository.save(claim);
 
         return RestResponse.ok(claimMapper.toClaimResponse(claim));
     }
@@ -92,7 +96,7 @@ public class ClaimServiceImpl implements IClaimService {
     }
 
     @Override
-    public RestResponse<ClaimResponse> reviewClaim(Long userId, Long claimId, String status) {
+    public RestResponse<ClaimResponse> reviewClaim(Long userId, Long claimId,  ClaimReviewRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
@@ -108,7 +112,7 @@ public class ClaimServiceImpl implements IClaimService {
             throw new AppException(ErrorCode.BUSINESS_INVALID_SEQUENCE);
         }
 
-        switch (ClaimStatus.valueOf(status)) {
+        switch (ClaimStatus.valueOf(request.getStatus())) {
             case APPROVED:
                 claim.setStatus(ClaimStatus.APPROVED.name());
                 claim.setUpdatedAt(LocalDateTime.now());
