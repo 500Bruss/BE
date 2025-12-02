@@ -16,6 +16,7 @@ public interface ProductMapper {
     @Mapping(source = "metaData", target = "metaData")
     @Mapping(source = "baseCover", target = "baseCover")
     @Mapping(source = "category.id", target = "categoryId")
+    @Mapping(source = "category.name", target = "categoryName")
     @Mapping(source = "items", target = "addonsList")
     ProductResponse toProductResponse(Product product);
 

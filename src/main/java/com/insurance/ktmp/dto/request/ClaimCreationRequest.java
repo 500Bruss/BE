@@ -15,7 +15,7 @@ import java.util.Map;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ClaimCreationRequest {
-    LocalDateTime incidentDate;
+    String incidentDate;
     Map<String, Object> claimData;
     BigDecimal amountClaimed;
     String resolutionNote;

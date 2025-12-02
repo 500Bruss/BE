@@ -19,8 +19,6 @@ public class AddonsResponse {
     String name;
     String description;
     BigDecimal price;
-    List<AddonsResponse> addons;
-
     AddOnsStatus status;
     String metaData;
     LocalDateTime createdAt;

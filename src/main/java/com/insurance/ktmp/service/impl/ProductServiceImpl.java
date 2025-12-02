@@ -3,6 +3,7 @@ package com.insurance.ktmp.service.impl;
 import com.insurance.ktmp.common.IdGenerator;
 import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.common.SearchHelper;
+import com.insurance.ktmp.dto.request.AddonsCreationRequest;
 import com.insurance.ktmp.dto.request.ProductCreationRequest;
 import com.insurance.ktmp.dto.request.ProductUpdateRequest;
 import com.insurance.ktmp.dto.response.ListResponse;
@@ -32,6 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -82,22 +84,24 @@ public class ProductServiceImpl implements IProductService {
                 .updatedBy(user)
                 .build();
 
-//        List<Addon> addonList = new ArrayList<>();
-//        for (AddonsCreationRequest addOnItem : request.getListAddOns()) {
-//            Addon addon = Addon.builder()
-//                    .id(IdGenerator.generateRandomId())
-//                    .product(product)
-//                    .code(addOnItem.getCode())
-//                    .name(addOnItem.getName())
-//                    .description(addOnItem.getDescription())
-//                    .price(addOnItem.getPrice())
-//                    .active(true)
-//                    .metadata(addOnItem.getMetaData())
-//                    .build();
-//            addonList.add(addon);
-//        }
-//        addonRepository.saveAll(addonList);
         productRepository.save(product);
+
+        if (request.getListAddOns() != null) {
+            List<Addon> addonList = new ArrayList<>();
+            for (AddonsCreationRequest addOnItem : request.getListAddOns()) {
+                Addon addon = Addon.builder()
+                        .id(IdGenerator.generateRandomId())
+                        .product(product)
+                        .code(addOnItem.getCode())
+                        .name(addOnItem.getName())
+                        .description(addOnItem.getDescription())
+                        .price(addOnItem.getPrice())
+                        .metaData(addOnItem.getMetaData())
+                        .build();
+                addonList.add(addon);
+            }
+            addonRepository.saveAll(addonList);
+        }
 
         return RestResponse.ok(productMapper.toProductResponse(product));
     }
