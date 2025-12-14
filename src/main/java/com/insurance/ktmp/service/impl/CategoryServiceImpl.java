@@ -13,6 +13,7 @@ import com.insurance.ktmp.entity.Category;
 import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.entity.User;
 import com.insurance.ktmp.enums.CategoryStatus;
+import com.insurance.ktmp.enums.PolicyStatus;
 import com.insurance.ktmp.exception.AppException;
 import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.mapper.CategoryMapper;
@@ -20,6 +21,7 @@ import com.insurance.ktmp.repository.CategoryRepository;
 import com.insurance.ktmp.repository.UserRepository;
 import com.insurance.ktmp.service.ICategoryService;
 
+import com.insurance.ktmp.service.IPolicyService;
 import io.github.perplexhub.rsql.RSQLJPASupport;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,6 +44,7 @@ public class CategoryServiceImpl implements ICategoryService {
     CategoryRepository categoryRepository;
     CategoryMapper categoryMapper;
     UserRepository userRepository;
+    IPolicyService policyService;
 
     private static final List<String> SEARCH_FIELDS = List.of("status");
 
@@ -152,7 +155,7 @@ public class CategoryServiceImpl implements ICategoryService {
                 .code(category.getCode())
                 .name(category.getName())
                 .description(category.getDescription())
-                .productStatus(null) // nếu có enum thì convert
+                .status(CategoryStatus.valueOf(category.getStatus())) // nếu có enum thì convert
                 .metaData(category.getMetadata())
                 .createdDate(category.getCreatedAt())
                 .updatedDate(category.getUpdatedAt())
@@ -172,6 +175,33 @@ public class CategoryServiceImpl implements ICategoryService {
                 .map(categoryMapper::toCategoryResponse);
 
         return RestResponse.ok(ListResponse.of(responses));
+    }
+
+    @Override
+    public RestResponse<String> updateCategoryStatus(Long id, String newStatus, Long userId, boolean isCronJob) {
+        if (!isCronJob) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            policyService.checkAdminRole(user); // Tái sử dụng hàm kiểm tra quyền
+        }
+
+        CategoryStatus statusEnum;
+        try {
+            statusEnum = CategoryStatus.valueOf(newStatus.toUpperCase());
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.BUSINESS_INVALID_SEQUENCE);
+        }
+
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        String oldStatus = category.getStatus();
+
+        category.setStatus(statusEnum.name());
+        category.setUpdatedAt(LocalDateTime.now());
+        categoryRepository.save(category);
+
+        return RestResponse.ok("Category updated to " + statusEnum.name());
     }
 
 }

@@ -33,4 +33,6 @@ public interface ICategoryService {
             String search,
             boolean all
     );
+
+    RestResponse<String> updateCategoryStatus(Long id, String status, Long userId, boolean isCronJob);
 }
