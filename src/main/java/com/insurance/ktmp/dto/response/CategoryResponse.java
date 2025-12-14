@@ -1,5 +1,6 @@
 package com.insurance.ktmp.dto.response;
 
+import com.insurance.ktmp.enums.CategoryStatus;
 import com.insurance.ktmp.enums.ProductStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -16,7 +17,7 @@ public class CategoryResponse {
     String code;
     String name;
     String description;
-    ProductStatus productStatus;
+    CategoryStatus status;
     String metaData;
     LocalDateTime createdDate;
     LocalDateTime updatedDate;
