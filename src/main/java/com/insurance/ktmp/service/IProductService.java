@@ -16,4 +16,6 @@ public interface IProductService {
     RestResponse<ProductResponse> getById(Long id);
 
     RestResponse<ProductResponse> updateProduct(Long id, ProductUpdateRequest request);
+
+    RestResponse<String> updateProductStatus(Long id, String status, Long userId, boolean isCronJob);
 }

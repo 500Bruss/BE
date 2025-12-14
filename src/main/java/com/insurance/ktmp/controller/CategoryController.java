@@ -80,4 +80,14 @@ public class CategoryController extends BaseController {
         RestResponse<String> response = categoryService.updateCategoryVisible(categoryId, userId, status);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/{id}/status/{status}")
+    public ResponseEntity<RestResponse<String>> updateStatus(
+            @PathVariable Long id,
+            @PathVariable String status,
+            HttpServletRequest req
+    ) {
+        Long userId = extractUserIdFromRequest(req);
+        return ResponseEntity.ok(categoryService.updateCategoryStatus(id, status, userId, false));
+    }
 }

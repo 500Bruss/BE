@@ -8,19 +8,15 @@ import com.insurance.ktmp.dto.request.ProductCreationRequest;
 import com.insurance.ktmp.dto.request.ProductUpdateRequest;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.dto.response.ProductResponse;
-import com.insurance.ktmp.entity.Category;
-import com.insurance.ktmp.entity.Product;
-import com.insurance.ktmp.entity.User;
-import com.insurance.ktmp.entity.Addon;
+import com.insurance.ktmp.entity.*;
+import com.insurance.ktmp.enums.PolicyStatus;
 import com.insurance.ktmp.enums.ProductStatus;
 import com.insurance.ktmp.exception.AppException;
 import com.insurance.ktmp.exception.ErrorCode;
 import com.insurance.ktmp.mapper.ProductMapper;
 import com.insurance.ktmp.mapper.AddonMapper;
-import com.insurance.ktmp.repository.AddonRepository;
-import com.insurance.ktmp.repository.CategoryRepository;
-import com.insurance.ktmp.repository.ProductRepository;
-import com.insurance.ktmp.repository.UserRepository;
+import com.insurance.ktmp.repository.*;
+import com.insurance.ktmp.service.IPolicyService;
 import com.insurance.ktmp.service.IProductService;
 import io.github.perplexhub.rsql.RSQLJPASupport;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +43,7 @@ public class ProductServiceImpl implements IProductService {
     private final AddonRepository addonRepository;
     private final ProductMapper productMapper;
     private final AddonMapper addonMapper;
+    private final IPolicyService policyService;
     @Override
     public RestResponse<ListResponse<ProductResponse>> getListProductsByFilter(int page, int size, String sort, String filter, String search, boolean all) {
         Specification<Product> sortable = RSQLJPASupport.toSort(sort);
@@ -189,6 +186,33 @@ public class ProductServiceImpl implements IProductService {
         ProductResponse response = productMapper.toProductResponse(saved);
 
         return RestResponse.ok(response);
+    }
+
+    @Override
+    public RestResponse<String> updateProductStatus(Long id, String newStatus, Long userId, boolean isCronJob) {
+        if (!isCronJob) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            policyService.checkAdminRole(user); // Tái sử dụng hàm kiểm tra quyền
+        }
+
+        ProductStatus statusEnum;
+        try {
+            statusEnum = ProductStatus.valueOf(newStatus.toUpperCase());
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.BUSINESS_INVALID_SEQUENCE);
+        }
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        String oldStatus = product.getStatus();
+
+        product.setStatus(statusEnum.name());
+        product.setUpdatedAt(LocalDateTime.now());
+        productRepository.save(product);
+
+        return RestResponse.ok("Product updated to " + statusEnum.name());
     }
 
 

@@ -44,7 +44,8 @@ public class PolicyServiceImpl implements IPolicyService {
     /**
      * Helper method để kiểm tra quyền Admin
      */
-    private void checkAdminRole(User user) {
+    @Override
+    public void checkAdminRole(User user) {
         if (!user.getRole().stream()
                 .anyMatch(role -> role.getName().equals(PredefinedRole.ADMIN_ROLE))) {
             throw new AppException(ErrorCode.UNAUTHORIZED_TO_UPDATE_THIS_RESOURCE);

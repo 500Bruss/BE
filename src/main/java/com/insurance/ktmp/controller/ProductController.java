@@ -63,4 +63,14 @@ public class ProductController extends BaseController{
         return ResponseEntity.ok(productService.getById(id));
     }
 
+
+    @PutMapping("/{id}/status/{status}")
+    public ResponseEntity<RestResponse<String>> updateStatus(
+            @PathVariable Long id,
+            @PathVariable String status,
+            HttpServletRequest req
+    ) {
+        Long userId = extractUserIdFromRequest(req);
+        return ResponseEntity.ok(productService.updateProductStatus(id, status, userId, false));
+    }
 }

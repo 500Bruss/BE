@@ -4,8 +4,11 @@ import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.dto.request.PolicyCreationRequest;
 import com.insurance.ktmp.dto.response.PolicyResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
+import com.insurance.ktmp.entity.User;
 
 public interface IPolicyService {
+
+    void checkAdminRole(User user);
 
     RestResponse<PolicyResponse> createPolicy(Long applicationId, Long userId);
 
