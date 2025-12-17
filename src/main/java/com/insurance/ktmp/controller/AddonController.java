@@ -60,8 +60,4 @@ public class AddonController extends BaseController {
     ) {
         return RestResponse.ok(addonService.getByProduct(productId));
     }
-
-
-
-
 }

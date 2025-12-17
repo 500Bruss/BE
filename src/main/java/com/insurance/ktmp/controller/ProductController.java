@@ -22,7 +22,6 @@ import static org.reflections.Reflections.log;
 
 @RestController
 @RequestMapping("/api/products")
-
 @RequiredArgsConstructor
 public class ProductController extends BaseController{
     private final IProductService productService;

@@ -27,8 +27,12 @@ public class VnPayGatewayController {
 
         if (ipnResponse.status() == HttpStatus.OK.value()) {
             // Nếu thanh toán thành công, redirect người dùng về returnUrl
-            String returnUrl = "http://localhost:5173/PaymentResult";  // returnUrl đã được cấu hình trong hệ thống của bạn
-            response.sendRedirect(returnUrl); // Redirect về URL cho người dùng
+            String vnp_ResponseCode = request.getParameter("vnp_ResponseCode");
+            String queryParams = request.getQueryString();
+            // Chuyển hướng về trang kết quả Frontend kèm theo mã kết quả
+            String frontendUrl = "http://localhost:5173/payment/result?" + queryParams;
+            response.sendRedirect(frontendUrl);// returnUrl đã được cấu hình trong hệ thống của bạn
+            // Redirect về URL cho người dùng
         } else {
             // Nếu có lỗi hoặc thanh toán thất bại, bạn có thể redirect về trang thất bại khác
             String failureUrl = "http://localhost:5173/payment-failed";  // URL khi thanh toán thất bại

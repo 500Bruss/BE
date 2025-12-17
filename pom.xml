@@ -150,6 +150,11 @@
             <version>2.3.232</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>5.0.0</version> <!-- Bạn có thể thay đổi phiên bản nếu cần -->
+        </dependency>
     </dependencies>
 
     <build>

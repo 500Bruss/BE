@@ -11,13 +11,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductUpdateRequest {
-
     String name;
     String description;
     Long categoryId;
     BigDecimal price;
     String baseCover;
     String metadata;
-
-
 }

@@ -6,6 +6,7 @@ import com.insurance.ktmp.dto.response.QuoteResponse;
 import com.insurance.ktmp.service.IQuoteService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class QuotationController extends BaseController {
 
     @PostMapping
     public ResponseEntity<RestResponse<QuoteResponse>> createQuote(
-            @RequestBody QuoteCreationRequest request,
+            @RequestBody @Valid QuoteCreationRequest request,
             HttpServletRequest httpReq) {
         Long userId = extractUserIdFromRequest(httpReq);
         RestResponse<QuoteResponse> response = quoteService.createQuote(userId, request);

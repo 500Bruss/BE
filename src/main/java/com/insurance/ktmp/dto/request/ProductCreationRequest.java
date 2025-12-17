@@ -1,6 +1,7 @@
 package com.insurance.ktmp.dto.request;
 
 import com.insurance.ktmp.enums.ProductStatus;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,14 +15,14 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductCreationRequest {
-    @NonNull
+    @NotNull
     String name;
     String description;
 
-    @NonNull
+    @NotNull
     Long categoryId;
 
-    @NonNull
+    @NotNull
     BigDecimal price;
     String baseCover;
     String metaData;

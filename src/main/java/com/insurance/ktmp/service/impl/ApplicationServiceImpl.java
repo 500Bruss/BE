@@ -172,11 +172,4 @@ public class ApplicationServiceImpl implements IApplicationService {
         return RestResponse.ok(mapper.toResponse(app));
     }
 
-
-
-
-
-
-
-
 }
