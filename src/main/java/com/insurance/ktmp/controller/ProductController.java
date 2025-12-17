@@ -6,7 +6,6 @@ import com.insurance.ktmp.dto.request.ProductUpdateRequest;
 import com.insurance.ktmp.dto.response.ListResponse;
 import com.insurance.ktmp.dto.response.ProductResponse;
 
-import com.insurance.ktmp.entity.Product;
 import com.insurance.ktmp.service.IProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
