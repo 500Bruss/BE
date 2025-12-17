@@ -45,7 +45,6 @@ public class QuotationControllerIntegrationTest {
     @MockBean
     private IQuoteService quoteService;
 
-    // Thay thế bean JwtTokenUtil thực để mock extractUserId
     @MockBean
     private JwtTokenUtil jwtTokenUtil;
 
