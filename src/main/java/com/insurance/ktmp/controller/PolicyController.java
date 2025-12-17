@@ -1,11 +1,9 @@
 package com.insurance.ktmp.controller;
 
 import com.insurance.ktmp.common.RestResponse;
-import com.insurance.ktmp.dto.request.PolicyCreationRequest;
 import com.insurance.ktmp.dto.response.PolicyResponse;
 import com.insurance.ktmp.dto.response.ListResponse;
 
-import com.insurance.ktmp.dto.response.ProductResponse;
 
 
 import com.insurance.ktmp.service.IPolicyService;
