@@ -42,7 +42,6 @@ public class QuotationControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // Thay thế bean IQuoteService thực bằng một Mock
     @MockBean
     private IQuoteService quoteService;
 
