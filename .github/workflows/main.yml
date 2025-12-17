@@ -35,9 +35,8 @@ jobs:
           cache: 'maven'
 
       - name: Build and Test
-        run: mvn clean verify
-        env:
-          # Ép Spring Boot dùng localhost vì MySQL đã được map port ra ngoài
-          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/insurance_db
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: plmoknijb09
+        run: >
+          mvn clean verify 
+          -Dspring.datasource.url=jdbc:mysql://localhost:3306/insurance_db 
+          -Dspring.datasource.username=root 
+          -Dspring.datasource.password=plmoknijb09
