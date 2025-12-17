@@ -16,7 +16,7 @@ jobs:
     steps:
       # Step 1: Checkout mã nguồn từ GitHub
       - name: Checkout code
-        uses: actions/checkout@v2  # Sử dụng action để checkout mã nguồn từ repository
+        uses: actions/cache@v3 # Sử dụng action để checkout mã nguồn từ repository
 
       # Step 2: Set up Java (JDK 17, bạn có thể thay đổi nếu cần)
       - name: Set up JDK 17
@@ -26,7 +26,7 @@ jobs:
 
       # Step 3: Cài đặt phụ thuộc Maven
       - name: Cache Maven dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository  # Lưu cache để tránh tải lại phụ thuộc mỗi lần
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}  # Key để kiểm tra cache
