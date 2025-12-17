@@ -23,7 +23,8 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # Chỉ cần một lệnh duy nhất để build và chạy test
-      # 'verify' bao gồm cả 'test' và 'package', sạch sẽ và tối ưu hơn
-      - name: Build and Test with Maven
-        run: mvn clean verify
+      - name: Build with Maven
+        run: mvn clean install -DskipTests=false
+
+      - name: Run tests with Maven
+        run: mvn test
