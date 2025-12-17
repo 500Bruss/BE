@@ -10,12 +10,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:
-      # Sử dụng v4 để nhanh và bảo mật hơn
-      - name: Checkout code
-        uses: actions/checkout@v4
+    # Khởi tạo MySQL Container
+    services:
+      mysql_db: # Đây là id của service
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: plmoknijb09
+          MYSQL_DATABASE: insurance_db
+        ports:
+          - 3306:3306 # Map port 3306 của container ra 3306 của máy ảo CI
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
-      # Tích hợp sẵn cache maven vào đây, xóa bỏ bước cache thủ công bên dưới
+    steps:
+      - uses: actions/checkout@v4
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -23,9 +34,10 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      #Build
-      - name: Build with Maven
-        run: mvn clean install -DskipTests=false
-
-      - name: Run tests with Maven
-        run: mvn test
+      - name: Build and Test
+        run: mvn clean verify
+        env:
+          # Ép Spring Boot dùng localhost vì MySQL đã được map port ra ngoài
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/insurance_db
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: plmoknijb09
