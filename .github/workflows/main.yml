@@ -1,44 +1,29 @@
 name: Java CI with Maven
 
-# Kích hoạt workflow khi có push hoặc pull request vào nhánh main
 on:
   push:
-    branches:
-      - main  # Có thể thay đổi theo nhánh bạn muốn
+    branches: [ main ]
   pull_request:
-    branches:
-      - main  # Kích hoạt cho các pull request vào nhánh main
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Chạy trên môi trường Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout mã nguồn từ GitHub
+      # Sử dụng v4 để nhanh và bảo mật hơn
       - name: Checkout code
-        uses: actions/checkout@v2 # Sử dụng action để checkout mã nguồn từ repository
+        uses: actions/checkout@v4
 
-      # Step 2: Set up Java (JDK 17, bạn có thể thay đổi nếu cần)
+      # Tích hợp sẵn cache maven vào đây, xóa bỏ bước cache thủ công bên dưới
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
 
-      # Step 3: Cài đặt phụ thuộc Maven
-      - name: Cache Maven dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository  # Lưu cache để tránh tải lại phụ thuộc mỗi lần
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}  # Key để kiểm tra cache
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      # Step 4: Build dự án và chạy các unit tests
-      - name: Build with Maven
-        run: mvn clean install -DskipTests=false  # -DskipTests=false để chạy unit tests
-
-      # Step 5: Kiểm tra kết quả unit test
-      - name: Run tests with Maven
-        run: mvn test  # Chạy các unit tests của dự án
+      # Chỉ cần một lệnh duy nhất để build và chạy test
+      # 'verify' bao gồm cả 'test' và 'package', sạch sẽ và tối ưu hơn
+      - name: Build and Test with Maven
+        run: mvn clean verify
