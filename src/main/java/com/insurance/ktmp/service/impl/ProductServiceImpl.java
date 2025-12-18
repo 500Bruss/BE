@@ -94,6 +94,8 @@ public class ProductServiceImpl implements IProductService {
                         .description(addOnItem.getDescription())
                         .price(addOnItem.getPrice())
                         .metaData(addOnItem.getMetaData())
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
                         .build();
                 addonList.add(addon);
             }
