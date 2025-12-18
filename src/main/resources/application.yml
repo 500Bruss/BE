@@ -23,7 +23,7 @@ vnpay:
   secretKey: OK25EA6UVCYQG0CA3M4BWPW3GZLM3CG1
   paymentUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   refundUrl: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
-  returnUrl: http://localhost:8080/api/payments/vnpay/return
-  ipnUrl: http://localhost:8080/api/payments/vnpay/ipn
+  returnUrl: https://insurance-system-6vm1.onrender.com/api/payments/vnpay/return
+  ipnUrl: https://insurance-system-6vm1.onrender.com/api/payments/vnpay/ipn
 server:
   port: 8080
