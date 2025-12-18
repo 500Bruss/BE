@@ -18,7 +18,9 @@ public class PolicyResponse {
 
     String applicationId;
     String userId;
+    String userName;
     String productId;
+    String productName;
 
     String policyData;
 

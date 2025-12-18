@@ -15,6 +15,8 @@ public interface PolicyMapper {
 
     @Mapping(target = "status",
             expression = "java(com.insurance.ktmp.enums.PolicyStatus.valueOf(policy.getStatus()))")
+    @Mapping(source = "user.username", target = "userName")
+    @Mapping(source = "product.name", target = "productName")
     PolicyResponse toPolicyResponse(Policy policy);
 }
 
