@@ -4,7 +4,6 @@ import com.insurance.ktmp.common.RestResponse;
 import com.insurance.ktmp.dto.request.ProductCreationRequest;
 import com.insurance.ktmp.dto.request.ApplicationStatusUpdateRequest;
 import com.insurance.ktmp.dto.response.ListResponse;
-import com.insurance.ktmp.dto.response.ProductResponse;
 import com.insurance.ktmp.dto.request.ApplicationCreationRequest;
 import com.insurance.ktmp.dto.response.ApplicationResponse;
 import com.insurance.ktmp.service.IApplicationService;
