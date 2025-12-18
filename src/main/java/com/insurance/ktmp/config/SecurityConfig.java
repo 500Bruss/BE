@@ -42,7 +42,7 @@ public class SecurityConfig {
                 );
         httpSecurity.cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(List.of("500-bros-ktmp.vercel.app"));
+            config.setAllowedOrigins(List.of("https://500-bros-ktmp.vercel.app"));
             config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
             config.setAllowedHeaders(List.of("*"));
             config.setAllowCredentials(true);
