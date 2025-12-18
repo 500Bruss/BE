@@ -19,9 +19,9 @@ services:
     depends_on:
       - insurance_db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://insurance_db:3306/insurance_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: plmoknijb09
+      SPRING_DATASOURCE_URL: jdbc:mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/test?useSSL=true&enabledTLSProtocols=TLSv1.2,TLSv1.3
+      SPRING_DATASOURCE_USERNAME: bP76JuA9u3FnEYp.root
+      SPRING_DATASOURCE_PASSWORD: VNwsFBtsYmMcgk8d
     ports:
       - "8080:8080"
     restart: always

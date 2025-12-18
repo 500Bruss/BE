@@ -1,10 +1,14 @@
 spring:
   datasource:
 #    url: "jdbc:mysql://localhost:3306/insurance_db"
-    url: "jdbc:mysql://insurance_db:3306/insurance_db"
+#    url: "jdbc:mysql://insurance_db:3306/insurance_db"
+#    driverClassName: "com.mysql.cj.jdbc.Driver"
+#    username: root
+#    password: plmoknijb09
+    url: jdbc:mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/test?useSSL=true&enabledTLSProtocols=TLSv1.2,TLSv1.3
     driverClassName: "com.mysql.cj.jdbc.Driver"
-    username: root
-    password: plmoknijb09
+    username: "bP76JuA9u3FnEYp.root" # Lưu ý: Thường có format 'user.prefix'
+    password: "VNwsFBtsYmMcgk8d"
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
