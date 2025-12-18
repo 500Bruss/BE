@@ -108,7 +108,7 @@ public class ClaimServiceImpl implements IClaimService {
         Claim claim = claimRepository.findById(claimId)
                 .orElseThrow(() -> new AppException(ErrorCode.CLAIM_NOT_FOUND));
 
-        if (!claim.getStatus().equals(ClaimStatus.SUBMITTED.name())) {
+        if (!claim.getStatus().equals(ClaimStatus.SUBMITTED.name()) && !claim.getStatus().equals(ClaimStatus.APPROVED.name())) {
             throw new AppException(ErrorCode.BUSINESS_INVALID_SEQUENCE);
         }
 
