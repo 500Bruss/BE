@@ -20,6 +20,7 @@ public class ClaimResponse {
     LocalDateTime incidentDate;
     LocalDateTime reportedAt;
     String claimData;
+    String resolutionNote;
     BigDecimal amountClaimed;
     ClaimStatus status;
 }
