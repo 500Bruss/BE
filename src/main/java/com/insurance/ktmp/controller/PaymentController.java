@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
+
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
@@ -23,10 +25,15 @@ public class PaymentController extends BaseController{
     @PostMapping
     public ResponseEntity<RestResponse<PaymentResponse>> createPayment(
             @RequestBody PaymentCreationRequest request,
-            HttpServletRequest httpReq) {
+            HttpServletRequest httpReq) throws UnsupportedEncodingException {
         Long customerId = extractUserIdFromRequest(httpReq);
         RestResponse<PaymentResponse> response = paymentService
                 .createPayment(httpReq.getRemoteAddr(), customerId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/zalopay/callback")
+    public String zalopayCallback(@RequestBody String jsonStr) {
+        return paymentService.handleZaloPayCallback(jsonStr);
     }
 }

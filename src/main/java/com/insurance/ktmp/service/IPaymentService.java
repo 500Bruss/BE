@@ -5,8 +5,12 @@ import com.insurance.ktmp.dto.request.PaymentCreationRequest;
 import com.insurance.ktmp.dto.response.PaymentResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
-public interface IPaymentService {
-    RestResponse<PaymentResponse> createPayment(String ipAddress, Long customerId, PaymentCreationRequest request);
+import java.io.UnsupportedEncodingException;
 
-    RestResponse<String> handleVnPayIpn(HttpServletRequest request);
+public interface IPaymentService {
+    RestResponse<PaymentResponse> createPayment(String ipAddress, Long customerId, PaymentCreationRequest request) throws UnsupportedEncodingException;
+
+//    RestResponse<String> handleVnPayIpn(HttpServletRequest request);
+
+    String handleZaloPayCallback(String jsonStr);
 }

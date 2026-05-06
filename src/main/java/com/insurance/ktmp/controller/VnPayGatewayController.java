@@ -20,30 +20,30 @@ import java.io.IOException;
 public class VnPayGatewayController {
     private final IPaymentService paymentService;
 
-    @GetMapping("/vnpay/return")
-    @Transactional
-    public void vnpayHandleIpn(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        RestResponse<String> ipnResponse = paymentService.handleVnPayIpn(request); //todo
+//    @GetMapping("/vnpay/return")
+//    @Transactional
+//    public void vnpayHandleIpn(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//        RestResponse<String> ipnResponse = paymentService.handleVnPayIpn(request); //todo
+//
+//        if (ipnResponse.status() == HttpStatus.OK.value()) {
+//            // Nếu thanh toán thành công, redirect người dùng về returnUrl
+//            String vnp_ResponseCode = request.getParameter("vnp_ResponseCode");
+//            String queryParams = request.getQueryString();
+//            // Chuyển hướng về trang kết quả Frontend kèm theo mã kết quả
+//            String frontendUrl = "https://500-bros-ktmp.vercel.app/payment/result?" + queryParams;
+//            response.sendRedirect(frontendUrl);// returnUrl đã được cấu hình trong hệ thống của bạn
+//            // Redirect về URL cho người dùng
+//        } else {
+//            // Nếu có lỗi hoặc thanh toán thất bại, bạn có thể redirect về trang thất bại khác
+//            String failureUrl = "https://500-bros-ktmp.vercel.app/payment-failed";  // URL khi thanh toán thất bại
+//            response.sendRedirect(failureUrl); // Redirect về trang thất bại
+//        }
+//    }
 
-        if (ipnResponse.status() == HttpStatus.OK.value()) {
-            // Nếu thanh toán thành công, redirect người dùng về returnUrl
-            String vnp_ResponseCode = request.getParameter("vnp_ResponseCode");
-            String queryParams = request.getQueryString();
-            // Chuyển hướng về trang kết quả Frontend kèm theo mã kết quả
-            String frontendUrl = "https://500-bros-ktmp.vercel.app/payment/result?" + queryParams;
-            response.sendRedirect(frontendUrl);// returnUrl đã được cấu hình trong hệ thống của bạn
-            // Redirect về URL cho người dùng
-        } else {
-            // Nếu có lỗi hoặc thanh toán thất bại, bạn có thể redirect về trang thất bại khác
-            String failureUrl = "https://500-bros-ktmp.vercel.app/payment-failed";  // URL khi thanh toán thất bại
-            response.sendRedirect(failureUrl); // Redirect về trang thất bại
-        }
-    }
-
-    @GetMapping("/vnpay/ipn")
-    @Transactional
-    public ResponseEntity<RestResponse<String>> vnpayHandleIpn(HttpServletRequest request) {
-        RestResponse<String> response = paymentService.handleVnPayIpn(request);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
+//    @GetMapping("/vnpay/ipn")
+//    @Transactional
+//    public ResponseEntity<RestResponse<String>> vnpayHandleIpn(HttpServletRequest request) {
+//        RestResponse<String> response = paymentService.handleVnPayIpn(request);
+//        return ResponseEntity.status(HttpStatus.OK).body(response);
+//    }
 }

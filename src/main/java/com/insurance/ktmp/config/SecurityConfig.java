@@ -42,10 +42,17 @@ public class SecurityConfig {
                 );
         httpSecurity.cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(List.of("https://500-bros-ktmp.vercel.app"));
+            // Sử dụng OriginPatterns để chấp nhận cả localhost và các subdomain động của ngrok/vercel
+            config.setAllowedOriginPatterns(List.of(
+                    "http://localhost:5173",
+                    "https://*.ngrok-free.dev",
+                    "https://*.vercel.app"
+            ));
             config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
             config.setAllowedHeaders(List.of("*"));
             config.setAllowCredentials(true);
+            // Cho phép trình duyệt đọc các header quan trọng nếu cần
+            config.setExposedHeaders(List.of("Authorization", "Content-Disposition"));
             return config;
         }));
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
