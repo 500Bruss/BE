@@ -35,7 +35,7 @@ public class ZaloPayServiceImpl implements ZaloPayService {
 
         // Giả lập link dẫn đến trang thanh toán demo trên FE của bạn
         // Ví dụ: http://localhost:3000/mock-zalopay-ui?paymentId=...
-        String mockOrderUrl = "https://your-fe-domain.com/mock-payment-gateway?paymentId=" + paymentId;
+        String mockOrderUrl = "http://localhost:5173/payment/pay/" + paymentId;
 
         mockResult.put("return_code", 1);
         mockResult.put("order_url", mockOrderUrl);

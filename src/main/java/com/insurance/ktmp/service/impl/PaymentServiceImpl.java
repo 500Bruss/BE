@@ -78,7 +78,7 @@ public class PaymentServiceImpl implements IPaymentService {
 
         try {
             // Gọi sang ZaloPay để lấy link thanh toán
-            Map<String, Object> result = zaloPayService.createOrder(payment.getId(), payment.getAmount().longValue());
+            Map<String, Object> result = zaloPayService.createOrder(application.getId(), payment.getAmount().longValue());
 
             // ZaloPay trả về return_code = 1 là thành công
             if ((int) result.get("return_code") == 1) {
@@ -88,6 +88,8 @@ public class PaymentServiceImpl implements IPaymentService {
                         .applicationId(application.getId().toString())
                         .paymentUrl(orderUrl) // Trả link này về cho Frontend
                         .amount(payment.getAmount())
+                                .userId(application.getUser().getId().toString())
+                                .userName(application.getUser().getFullName())
                         .status(payment.getStatus())
                         .build());
             } else {
@@ -208,7 +210,7 @@ public class PaymentServiceImpl implements IPaymentService {
             String status = cbData.getString("status");
 
             if ("success".equals(status)) {
-                Payment payment = paymentRepository.findById(paymentId)
+                Payment payment = paymentRepository.findByApplicationId(paymentId)
                         .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
 
                 if (payment.getStatus() != PaymentStatus.SUCCESS) {
