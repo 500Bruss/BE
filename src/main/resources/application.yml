@@ -1,29 +1,45 @@
 spring:
   datasource:
-#    url: "jdbc:mysql://localhost:3306/insurance_db"
-#    url: "jdbc:mysql://insurance_db:3306/insurance_db"
-#    driverClassName: "com.mysql.cj.jdbc.Driver"
-#    username: root
-#    password: plmoknijb09
-    url: jdbc:mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/test?useSSL=true&enabledTLSProtocols=TLSv1.2,TLSv1.3
+    url: ${SPRING_DATASOURCE_URL}
     driverClassName: "com.mysql.cj.jdbc.Driver"
-    username: "bP76JuA9u3FnEYp.root" # Lưu ý: Thường có format 'user.prefix'
-    password: "VNwsFBtsYmMcgk8d"
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
     #      ddl-auto: validate
     show-sql: true
-jwt:
-  signerKey: "Fx4NoxybRRfHEk5J4Z12C45rxdfAcNGkMehTCQ1qrdY6B/Mw0Ie4E+36zVliXgWN\n"
-  valid-duration: 3600 #in second
-  refreshable-duration: 7200 #in second
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tuanphat17edu@gmail.com
+    password: kbsv ueln uokm gxlq
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 vnpay:
-  tmnCode: FRKIW639
-  secretKey: OK25EA6UVCYQG0CA3M4BWPW3GZLM3CG1
+#  tmnCode: FRKIW639
+  tmnCode: 3PMT9SLV
+  secretKey: 9K6XQKQL6JZUKBLW75J668SJO7D6GI1E
   paymentUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   refundUrl: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
-  returnUrl: https://insurance-system-6vm1.onrender.com/api/payments/vnpay/return
-  ipnUrl: https://insurance-system-6vm1.onrender.com/api/payments/vnpay/ipn
+  #  returnUrl: http://localhost:5173/restaurant
+  returnUrl: http://localhost:8083/api/payments/vnpay/return
+  ipnUrl: http://localhost:8083/api/payments/vnpay/ipn
+
+#  security:
+#    user:
+#      name: admin
+#      password: 123456
+jwt:
+  signerKey: "5c823fbad6726aa54a234e222bcf044684310146aa90e096e676e1c217e568de"
+  valid-duration: 3600 #in second
+  refreshable-duration: 7200 #in second
 server:
-  port: 8080
+  url: http://localhost:8083
+  cors:
+    allowed-origins:*
+  port: 8083
