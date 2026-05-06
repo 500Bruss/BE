@@ -39,7 +39,7 @@ public class ZaloPayServiceImpl implements ZaloPayService {
 
         mockResult.put("return_code", 1);
         mockResult.put("order_url", mockOrderUrl);
-        mockResult.put("return_message", "Cấp link thanh toán demo thành công");
+        mockResult.put("return_message", "Cấp link thanh toán demo thành công!");
 
         return mockResult;
     }
